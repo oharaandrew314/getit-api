@@ -1,0 +1,2 @@
+rootProject.name = "getit-api"
+
