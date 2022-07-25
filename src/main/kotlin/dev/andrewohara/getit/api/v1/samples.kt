@@ -14,7 +14,8 @@ val sampleShoppingListDataDtoV1 = ShoppingListDataDtoV1(
 )
 
 val sampleShoppingItemDataDtoV1 = ShoppingItemDataDtoV1(
-    name = ShoppingItemName.of("chips")
+    name = ShoppingItemName.of("chips"),
+    completed = false
 )
 
 val sampleShoppingItemDtoV1 = ShoppingItemDtoV1(

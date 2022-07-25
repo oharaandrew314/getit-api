@@ -19,7 +19,8 @@ data class ShoppingItemDtoV1(
 )
 
 data class ShoppingItemDataDtoV1(
-    val name: ShoppingItemName
+    val name: ShoppingItemName,
+    val completed: Boolean
 )
 
 fun ShoppingItem.toDtoV1() = ShoppingItemDtoV1(
@@ -39,5 +40,6 @@ fun ShoppingListDataDtoV1.toModel() = ShoppingListData(
 )
 
 fun ShoppingItemDataDtoV1.toModel() = ShoppingItemData(
-    name = name
+    name = name,
+    completed = completed
 )

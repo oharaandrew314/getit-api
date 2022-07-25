@@ -24,8 +24,8 @@ class TestDriver: HttpHandler {
         .let { DynamoShoppingListDao(it) }
 
     val itemsDao = dynamoDb
-        .tableMapper<ShoppingItem, ShoppingItemId, Unit>(TableName.of("items"), itemIdAttr, autoMarshalling = GetItMoshi)
-        .also { it.createTable(itemsByList) }
+        .tableMapper<ShoppingItem, ShoppingListId, ShoppingItemId>(TableName.of("items"), listIdAttr, itemIdAttr, autoMarshalling = GetItMoshi)
+        .also { it.createTable() }
         .let { DynamoItemsDao(it) }
 
     val service = GetItService(

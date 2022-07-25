@@ -45,10 +45,12 @@ data class ShoppingItem(
 )
 
 data class ShoppingItemData(
-    val name: ShoppingItemName
+    val name: ShoppingItemName,
+    val completed: Boolean
 )
 
 operator fun ShoppingItem.invoke(data: ShoppingItemData) = copy(
-    name = data.name
+    name = data.name,
+    completed = data.completed
 )
 

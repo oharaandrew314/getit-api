@@ -25,14 +25,16 @@ private val loader = AppLoader { sysEnv ->
         lists = DynamoShoppingListDao(
             dynamo.tableMapper(
                 TableName = listsTableName(env),
-                hashKeyAttribute = listIdAttr,
+                hashKeyAttribute = userIdAttr,
+                sortKeyAttribute = listIdAttr,
                 autoMarshalling = GetItMoshi
             )
         ),
         items = DynamoItemsDao(
             dynamo.tableMapper(
                 TableName = itemsTableName(env),
-                hashKeyAttribute = itemIdAttr,
+                hashKeyAttribute = listIdAttr,
+                sortKeyAttribute = itemIdAttr,
                 autoMarshalling = GetItMoshi
             )
         )

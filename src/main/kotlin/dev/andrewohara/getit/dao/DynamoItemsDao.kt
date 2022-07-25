@@ -5,12 +5,12 @@ import dev.andrewohara.getit.ShoppingItem
 import dev.andrewohara.getit.ShoppingListId
 import io.andrewohara.utils.http4k.connect.dynamodb.DynamoDbTableMapper
 
-class DynamoItemsDao(private val table: DynamoDbTableMapper<ShoppingItem, ShoppingItemId, Unit>) {
+class DynamoItemsDao(private val table: DynamoDbTableMapper<ShoppingItem, ShoppingListId, ShoppingItemId>) {
 
-    private val byList = table.index(itemsByList)
+    private val byList = table.primaryIndex()
 
     operator fun plusAssign(item: ShoppingItem) = table.plusAssign(item)
     operator fun minusAssign(item: ShoppingItem) = table.minusAssign(item)
     operator fun get(listId: ShoppingListId) = byList.query(listId)
-    operator fun get(itemId: ShoppingItemId) = table[itemId]
+    operator fun get(listId: ShoppingListId, itemId: ShoppingItemId) = table[listId, itemId]
 }

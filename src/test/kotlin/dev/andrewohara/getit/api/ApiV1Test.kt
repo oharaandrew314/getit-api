@@ -2,6 +2,7 @@ package dev.andrewohara.getit.api
 
 import dev.andrewohara.getit.*
 import dev.andrewohara.getit.api.v1.*
+import io.kotest.matchers.be
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.sequences.shouldBeEmpty
 import io.kotest.matchers.sequences.shouldContainExactly
@@ -11,6 +12,7 @@ import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Status
 import org.http4k.core.with
+import org.http4k.kotest.shouldHaveBody
 import org.http4k.kotest.shouldHaveStatus
 import org.junit.jupiter.api.Test
 
@@ -91,7 +93,8 @@ class ApiV1Test {
     fun `add item to list`() {
         val list = driver.createList()
         val data = ShoppingItemDataDtoV1(
-            name = ShoppingItemName.of("iced tea")
+            name = ShoppingItemName.of("iced tea"),
+            completed = false
         )
 
         val response = Request(Method.POST, "/v1/lists/${list.listId}/items")
@@ -105,5 +108,55 @@ class ApiV1Test {
             item.listId shouldBe list.listId
             driver.itemsDao[list.listId].map { it.toDtoV1() }.shouldContainExactly(item)
         }
+    }
+
+    @Test
+    fun `get items`() {
+        val list = driver.createList()
+        val item1 = driver.createItem(list)
+        val item2 = driver.createItem(list)
+
+        val response = Request(Method.GET, "/v1/lists/${list.listId}/items")
+            .withUser(list.userId)
+            .let(driver)
+
+        response shouldHaveStatus Status.OK
+        itemArrayV1Lens(response).toList().shouldContainExactlyInAnyOrder(
+            item1.toDtoV1(), item2.toDtoV1()
+        )
+    }
+
+    @Test
+    fun `update item`() {
+        val list = driver.createList()
+        val item1 = driver.createItem(list)
+        val item2 = driver.createItem(list)
+
+        val data = ShoppingItemDataDtoV1(name = ShoppingItemName.of("chips"), completed = false)
+
+        val response = Request(Method.PUT, "/v1/lists/${list.listId}/items/${item2.itemId}")
+            .withUser(list.userId)
+            .with(itemDataV1Lens of data)
+            .let(driver)
+
+        response shouldHaveStatus Status.OK
+        response.shouldHaveBody(itemV1Lens, be(item2.toDtoV1().copy(name = data.name)))
+        driver.itemsDao[list.listId].toList().shouldContainExactlyInAnyOrder(
+            item1, item2.copy(name = data.name)
+        )
+    }
+
+    @Test
+    fun `delete item`() {
+        val list = driver.createList()
+        val item1 = driver.createItem(list)
+        val item2 = driver.createItem(list)
+
+        Request(Method.DELETE, "/v1/lists/${list.listId}/items/${item2.itemId}")
+            .withUser(list.userId)
+            .let(driver)
+            .shouldHaveStatus(Status.OK)
+
+        driver.itemsDao[list.listId].toList().shouldContainExactlyInAnyOrder(item1)
     }
 }

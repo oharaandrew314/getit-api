@@ -64,7 +64,8 @@ class GetItServiceTest {
     fun `add item to missing list`() {
         val listId = ShoppingListId.of(UUID.randomUUID())
         val data = ShoppingItemData(
-            name = ShoppingItemName.of("chips")
+            name = ShoppingItemName.of("chips"),
+            completed = false
         )
         testObj.addItem(driver.defaultUserId, listId, data) shouldBeFailure ListNotFound(driver.defaultUserId, listId)
     }
@@ -74,7 +75,8 @@ class GetItServiceTest {
         val list = driver.createList(driver.defaultUserId)
         val otherUser = UserId.of("otherUser")
         val data = ShoppingItemData(
-            name = ShoppingItemName.of("chips")
+            name = ShoppingItemName.of("chips"),
+            completed = false
         )
 
         testObj.addItem(otherUser, list.listId, data) shouldBeFailure ListNotFound(otherUser, list.listId)
@@ -85,7 +87,8 @@ class GetItServiceTest {
         val list = driver.createList(driver.defaultUserId)
         val item1 = driver.createItem(list, "chips")
         val data = ShoppingItemData(
-            name = ShoppingItemName.of("iced tea")
+            name = ShoppingItemName.of("iced tea"),
+            completed = false
         )
 
         testObj.addItem(driver.defaultUserId, list.listId, data) shouldBeSuccess { item2 ->
@@ -120,27 +123,62 @@ class GetItServiceTest {
     }
 
     @Test
-    fun `complete missing item`() {
+    fun `update missing item`() {
+        val list = driver.createList()
         val itemId = ShoppingItemId.of(UUID.randomUUID())
-        testObj.completeItem(itemId) shouldBeFailure ItemNotFound(itemId)
+        testObj.updateItem(list.userId, list.listId, itemId, itemData) shouldBeFailure ItemNotFound(list.listId, itemId)
     }
 
     @Test
-    fun `complete item`() {
+    fun `update item for wrong list`() {
+        val list = driver.createList()
+        val item = driver.createItem(list)
+
+        val otherList = driver.createList()
+
+        testObj.updateItem(list.userId, otherList.listId, item.itemId, itemData) shouldBeFailure ItemNotFound(otherList.listId, item.itemId)
+    }
+
+    @Test
+    fun `update item for wrong user`() {
+        val list = driver.createList()
+        val item = driver.createItem(list)
+
+        testObj.updateItem(otherUserId, list.listId, item.itemId, itemData) shouldBeFailure ListNotFound(otherUserId, list.listId)
+    }
+
+    @Test
+    fun `update item`() {
         val list = driver.createList(driver.defaultUserId)
         val item1 = driver.createItem(list, "chips")
         val item2 = driver.createItem(list, "iced tea")
 
-        testObj.completeItem(item2.itemId) shouldBeSuccess { updated ->
-            updated shouldBe item2.copy(completed = true)
+        val data = ShoppingItemData(
+            name = ShoppingItemName.of("Jarritos"),
+            completed = true
+        )
+
+        testObj.updateItem(list.userId, list.listId, item2.itemId, data) shouldBeSuccess { updated ->
+            updated shouldBe item2.copy(
+                name = ShoppingItemName.of("Jarritos"),
+                completed = true
+            )
             driver.itemsDao[list.listId].toList().shouldContainExactlyInAnyOrder(item1, updated)
         }
     }
 
     @Test
     fun `delete missing item`() {
+        val list = driver.createList()
         val itemId = ShoppingItemId.of(UUID.randomUUID())
-        testObj.deleteItem(itemId) shouldBeFailure ItemNotFound(itemId)
+        testObj.deleteItem(list.userId, list.listId, itemId) shouldBeFailure ItemNotFound(list.listId, itemId)
+    }
+
+    @Test
+    fun `delete item for wrong user`() {
+        val list = driver.createList()
+        val item = driver.createItem(list)
+        testObj.deleteItem(otherUserId, list.listId, item.itemId) shouldBeFailure ListNotFound(otherUserId, list.listId)
     }
 
     @Test
@@ -149,7 +187,7 @@ class GetItServiceTest {
         val item1 = driver.createItem(list, "chips")
         val item2 = driver.createItem(list, "iced tea")
 
-        testObj.deleteItem(item2.itemId) shouldBeSuccess item2
+        testObj.deleteItem(list.userId, list.listId, item2.itemId) shouldBeSuccess item2
         driver.itemsDao[list.listId].toList().shouldContainExactly(item1)
     }
 

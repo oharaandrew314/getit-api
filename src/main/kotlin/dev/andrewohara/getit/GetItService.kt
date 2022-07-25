@@ -47,19 +47,18 @@ class GetItService(private val lists: DynamoShoppingListDao, private val items: 
             .peek { item -> items += item }
     }
 
-    fun completeItem(itemId: ShoppingItemId): Result<ShoppingItem, ShoppingError>  {
-        return items[itemId]
-            .asResultOr { ItemNotFound(itemId) }
-            .map { item ->
-                val updated = item.copy(completed = true)
-                items += updated
-                updated
-            }
+    fun updateItem(userId: UserId, listId: ShoppingListId, itemId: ShoppingItemId, data: ShoppingItemData): Result<ShoppingItem, ShoppingError>  {
+        return lists[userId, listId]
+            .asResultOr { ListNotFound(userId, listId) }
+            .flatMap { items[listId, itemId].asResultOr { ItemNotFound(listId, itemId) } }
+            .map { item -> item(data) }
+            .peek { item -> items += item }
     }
 
-    fun deleteItem(itemId: ShoppingItemId): Result<ShoppingItem, ShoppingError> {
-        return items[itemId]
-            .asResultOr { ItemNotFound(itemId) }
+    fun deleteItem(userId: UserId, listId: ShoppingListId, itemId: ShoppingItemId): Result<ShoppingItem, ShoppingError> {
+        return lists[userId, listId]
+            .asResultOr { ListNotFound(userId, listId) }
+            .flatMap { items[listId, itemId].asResultOr { ItemNotFound(listId, itemId) } }
             .peek { items -= it }
     }
 }

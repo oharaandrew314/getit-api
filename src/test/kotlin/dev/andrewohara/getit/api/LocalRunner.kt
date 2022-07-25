@@ -31,7 +31,8 @@ fun main() {
         items = DynamoItemsDao(
             dynamo.tableMapper(
                 TableName = itemsTableName(env),
-                hashKeyAttribute = itemIdAttr,
+                hashKeyAttribute = listIdAttr,
+                sortKeyAttribute = itemIdAttr,
                 autoMarshalling = GetItMoshi
             )
         )
