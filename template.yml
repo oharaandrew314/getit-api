@@ -1,0 +1,74 @@
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  CorsOrigins:
+    Type: CommaDelimitedList
+
+Globals:
+  Function:
+    Runtime: java11
+    MemorySize: 2048
+    Environment:
+      Variables:
+        lists_table_name: !Ref Lists
+        items_table_name: !Ref Items
+        cors_origins: !Join [ ',', !Ref CorsOrigins ]
+        JAVA_TOOL_OPTIONS: -XX:+TieredCompilation -XX:TieredStopAtLevel=1  # Optimize AOT compilation for cold-start time
+
+Resources:
+  Api:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      CorsConfiguration:
+        AllowCredentials: true
+        AllowHeaders: [ Authorization ]
+        AllowMethods: [ GET, POST, PUT, DELETE ]
+        AllowOrigins: !Ref CorsOrigins
+        ExposeHeaders: [ '*' ]
+      DisableExecuteApiEndpoint: true
+
+  ApiHandler:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Timeout: 10
+      Handler: dev.andrewohara.getit.api.LambdaHandler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref Lists
+        - DynamoDBCrudPolicy:
+            TableName: !Ref Items
+      Events:
+        HttpApiEvent:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref Api
+
+  Lists:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: userId
+          AttributeType: S
+        - AttributeName: listId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: userId
+          KeyType: HASH
+        - AttributeName: listId
+          KeyType: RANGE
+
+  Items:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: listId
+          AttributeType: S
+        - AttributeName: itemId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: listId
+          KeyType: HASH
+        - AttributeName: itemId
+          KeyType: RANGE

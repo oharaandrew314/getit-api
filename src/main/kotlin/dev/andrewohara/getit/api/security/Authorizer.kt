@@ -8,6 +8,4 @@ fun interface Authorizer {
     companion object
 }
 
-fun Authorizer.Companion.google() = Authorizer {
-    TODO("unimplemented")
-}
+fun Authorizer.Companion.google() = Authorizer { UserId.of(it) }

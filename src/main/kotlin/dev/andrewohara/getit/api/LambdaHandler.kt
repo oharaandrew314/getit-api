@@ -1,10 +1,7 @@
 package dev.andrewohara.getit.api
 
-import dev.andrewohara.getit.GetItService
 import dev.andrewohara.getit.api.security.Authorizer
 import dev.andrewohara.getit.api.security.google
-import dev.andrewohara.getit.dao.*
-import io.andrewohara.utils.http4k.connect.dynamodb.tableMapper
 import org.http4k.cloudnative.env.Environment
 import org.http4k.connect.amazon.dynamodb.DynamoDb
 import org.http4k.connect.amazon.dynamodb.Http
@@ -21,24 +18,7 @@ private val loader = AppLoader { sysEnv ->
     val env = Environment.from(sysEnv)
     val dynamo = DynamoDb.Http(env)
 
-    val service = GetItService(
-        lists = DynamoShoppingListDao(
-            dynamo.tableMapper(
-                TableName = listsTableName(env),
-                hashKeyAttribute = userIdAttr,
-                sortKeyAttribute = listIdAttr,
-                autoMarshalling = GetItMoshi
-            )
-        ),
-        items = DynamoItemsDao(
-            dynamo.tableMapper(
-                TableName = itemsTableName(env),
-                hashKeyAttribute = listIdAttr,
-                sortKeyAttribute = itemIdAttr,
-                autoMarshalling = GetItMoshi
-            )
-        )
-    )
+    val service = createService(dynamo, env)
 
     val corsPolicy = CorsPolicy(
         OriginPolicy.AnyOf(corsOrigins(env)),

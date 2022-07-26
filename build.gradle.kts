@@ -19,14 +19,14 @@ dependencies {
     implementation("org.http4k:http4k-contract")
     implementation("org.http4k:http4k-cloudnative")
     implementation("org.http4k:http4k-format-moshi")
-    implementation("org.http4k:http4k-format-gson")
+//    implementation("org.http4k:http4k-format-gson")
+    implementation("org.http4k:http4k-format-jackson")
     testImplementation("org.http4k:http4k-testing-kotest")
 
     // http4k-connect
     implementation(platform("org.http4k:http4k-connect-bom:3.18.1.3"))
     implementation("org.http4k:http4k-connect-amazon-dynamodb")
     testImplementation("org.http4k:http4k-connect-amazon-dynamodb-fake")
-    testImplementation("org.http4k:http4k-connect-amazon-kms-fake")
 
     //forkhandles
     implementation(platform("dev.forkhandles:forkhandles-bom:2.2.0.0"))

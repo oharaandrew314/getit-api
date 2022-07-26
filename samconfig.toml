@@ -1,0 +1,14 @@
+version=0.1
+
+[default.deploy.parameters]
+stack_name = "getit-api"
+s3_bucket = "io.andrewohara.sam"
+profile = "personal"
+region = "ca-central-1"
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "CorsOrigins=http://localhost:3000"
+
+[default.sync.parameters]
+stack_name = "getit-api"
+profile = "personal"
+region = "ca-central-1"
