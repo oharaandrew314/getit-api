@@ -13,6 +13,8 @@ import org.http4k.cloudnative.env.Environment
 import org.http4k.connect.amazon.dynamodb.DynamoDb
 import org.http4k.contract.contract
 import org.http4k.contract.openapi.ApiInfo
+import org.http4k.contract.openapi.ApiRenderer
+import org.http4k.contract.openapi.v3.AutoJsonToJsonSchema
 import org.http4k.contract.openapi.v3.OpenApi3
 import org.http4k.contract.security.BearerAuthSecurity
 import org.http4k.core.HttpHandler
@@ -51,6 +53,7 @@ fun createService(dynamoDb: DynamoDb, env: Environment) = GetItService(
     )
 )
 
+
 fun createApi(service: GetItService, authorizer: Authorizer): HttpHandler {
     val contexts = RequestContexts()
     val authLens = RequestContextKey.required<UserId>(contexts, "auth")
@@ -63,7 +66,9 @@ fun createApi(service: GetItService, authorizer: Authorizer): HttpHandler {
                 ApiInfo(
                     title = "GetIt API",
                     version = "v1.0"
-                )
+                ),
+                json = GetItOpenApiJackson,
+                apiRenderer = ApiRenderer.Auto(GetItOpenApiJackson, AutoJsonToJsonSchema(GetItOpenApiJackson))
             )
             descriptionPath =  "/openapi.json"
             routes += apiV1(authLens, service)
