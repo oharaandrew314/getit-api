@@ -5,11 +5,7 @@ import dev.andrewohara.getit.api.security.google
 import org.http4k.cloudnative.env.Environment
 import org.http4k.connect.amazon.dynamodb.DynamoDb
 import org.http4k.connect.amazon.dynamodb.Http
-import org.http4k.core.Method
 import org.http4k.core.then
-import org.http4k.filter.AnyOf
-import org.http4k.filter.CorsPolicy
-import org.http4k.filter.OriginPolicy
 import org.http4k.filter.ServerFilters
 import org.http4k.serverless.ApiGatewayV2LambdaFunction
 import org.http4k.serverless.AppLoader
@@ -17,15 +13,8 @@ import org.http4k.serverless.AppLoader
 private val loader = AppLoader { sysEnv ->
     val env = Environment.from(sysEnv)
     val dynamo = DynamoDb.Http(env)
-
     val service = createService(dynamo, env)
-
-    val corsPolicy = CorsPolicy(
-        OriginPolicy.AnyOf(corsOrigins(env)),
-        headers = listOf("Authorization"),
-        methods = listOf(Method.GET, Method.POST, Method.PUT, Method.DELETE),
-        credentials = true
-    )
+    val corsPolicy = createCorsPolicy(env)
 
     ServerFilters.Cors(corsPolicy)
         .then(createApi(service, Authorizer.google()))

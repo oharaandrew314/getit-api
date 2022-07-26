@@ -16,13 +16,23 @@ import org.http4k.contract.openapi.ApiInfo
 import org.http4k.contract.openapi.v3.OpenApi3
 import org.http4k.contract.security.BearerAuthSecurity
 import org.http4k.core.HttpHandler
+import org.http4k.core.Method
 import org.http4k.core.RequestContexts
 import org.http4k.core.then
-import org.http4k.filter.ResponseFilters
-import org.http4k.filter.ServerFilters
+import org.http4k.filter.*
 import org.http4k.lens.RequestContextKey
 
-fun createService(dynamoDb: DynamoDb, env: Environment = Environment.ENV) = GetItService(
+fun createCorsPolicy(env: Environment) = CorsPolicy(
+    corsOrigins(env)
+        ?.let { OriginPolicy.AnyOf(it) }
+        ?: OriginPolicy.AllowAll()
+    ,
+    headers = listOf("Authorization"),
+    methods = listOf(Method.GET, Method.POST, Method.PUT, Method.DELETE),
+    credentials = true
+)
+
+fun createService(dynamoDb: DynamoDb, env: Environment) = GetItService(
     lists = DynamoShoppingListDao(
         dynamoDb.tableMapper(
             TableName = listsTableName(env),

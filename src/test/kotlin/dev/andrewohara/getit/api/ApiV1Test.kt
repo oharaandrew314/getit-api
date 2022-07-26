@@ -15,6 +15,7 @@ import org.http4k.core.with
 import org.http4k.kotest.shouldHaveBody
 import org.http4k.kotest.shouldHaveStatus
 import org.junit.jupiter.api.Test
+import java.util.*
 
 class ApiV1Test {
 
@@ -67,6 +68,15 @@ class ApiV1Test {
             .shouldHaveStatus(Status.OK)
 
         driver.listsDao[driver.defaultUserId].shouldBeEmpty()
+    }
+
+    @Test
+    fun `delete list - not found`() {
+        val listId = ShoppingListId.of(UUID.randomUUID())
+        Request(Method.GET, "/v1/lists/$listId")
+            .withUser(driver.defaultUserId)
+            .let(driver)
+            .shouldHaveStatus(Status.NOT_FOUND)
     }
 
     @Test
