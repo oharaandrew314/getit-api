@@ -3,9 +3,9 @@ package dev.andrewohara.getit
 import dev.andrewohara.getit.api.createApi
 import dev.andrewohara.getit.api.security.Authorizer
 import dev.andrewohara.getit.dao.*
-import io.andrewohara.utils.http4k.connect.dynamodb.tableMapper
 import org.http4k.connect.amazon.dynamodb.DynamoTable
 import org.http4k.connect.amazon.dynamodb.FakeDynamoDb
+import org.http4k.connect.amazon.dynamodb.mapper.tableMapper
 import org.http4k.connect.amazon.dynamodb.model.TableName
 import org.http4k.connect.storage.InMemory
 import org.http4k.connect.storage.Storage

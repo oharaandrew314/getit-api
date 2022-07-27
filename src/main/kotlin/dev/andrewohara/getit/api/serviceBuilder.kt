@@ -6,11 +6,11 @@ import dev.andrewohara.getit.api.security.Authorizer
 import dev.andrewohara.getit.api.v1.apiV1
 import dev.andrewohara.getit.dao.*
 import io.andrewohara.utils.http4k.ContractUi
-import io.andrewohara.utils.http4k.connect.dynamodb.tableMapper
 import io.andrewohara.utils.http4k.logErrors
 import io.andrewohara.utils.http4k.logSummary
 import org.http4k.cloudnative.env.Environment
 import org.http4k.connect.amazon.dynamodb.DynamoDb
+import org.http4k.connect.amazon.dynamodb.mapper.tableMapper
 import org.http4k.contract.contract
 import org.http4k.contract.openapi.ApiInfo
 import org.http4k.contract.openapi.ApiRenderer

@@ -24,7 +24,7 @@ dependencies {
     testImplementation("org.http4k:http4k-testing-kotest")
 
     // http4k-connect
-    implementation(platform("org.http4k:http4k-connect-bom:3.18.1.3"))
+    implementation(platform("org.http4k:http4k-connect-bom:3.19.0.0"))
     implementation("org.http4k:http4k-connect-amazon-dynamodb")
     testImplementation("org.http4k:http4k-connect-amazon-dynamodb-fake")
 
