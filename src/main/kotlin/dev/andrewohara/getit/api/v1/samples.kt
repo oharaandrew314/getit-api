@@ -21,5 +21,6 @@ val sampleShoppingItemDataDtoV1 = ShoppingItemDataDtoV1(
 val sampleShoppingItemDtoV1 = ShoppingItemDtoV1(
     listId = sampleShoppingListDtoV1.listId,
     itemId = ShoppingItemId.of(UUID.fromString("8b3fbc45-ffc6-4d63-9b97-b2bf049b8f32")),
-    name = ShoppingItemName.of("iced tea")
+    name = ShoppingItemName.of("iced tea"),
+    completed = false
 )
