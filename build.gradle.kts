@@ -11,6 +11,10 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation("org.slf4j:slf4j-simple:2.0.0-alpha7")
     implementation("com.github.oharaandrew314:service-utils:0.8.4")
+    implementation("com.auth0:java-jwt:4.0.0")
+    implementation("com.auth0:jwks-rsa:0.21.1"){
+        exclude("com.google.guava", "guava")
+    }
 
     // http4k
     implementation(platform("org.http4k:http4k-bom:4.27.2.0"))

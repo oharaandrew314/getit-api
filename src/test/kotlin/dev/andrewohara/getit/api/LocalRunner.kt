@@ -1,7 +1,7 @@
 package dev.andrewohara.getit.api
 
 import dev.andrewohara.getit.api.security.Authorizer
-import dev.andrewohara.getit.fake
+import dev.andrewohara.getit.api.security.googleJwt
 import org.http4k.cloudnative.env.Environment
 import org.http4k.connect.amazon.dynamodb.DynamoDb
 import org.http4k.connect.amazon.dynamodb.Http
@@ -14,7 +14,8 @@ fun main() {
     val env = Environment.ENV
     val dynamo = DynamoDb.Http(env)
     val service = createService(dynamo, env)
-    val api = createApi(service, Authorizer.fake())
+    val authorizer = Authorizer.googleJwt(jwtAudience(env))
+    val api = createApi(service, authorizer)
     val corsPolicy = createCorsPolicy(env)
 
     ServerFilters.Cors(corsPolicy)

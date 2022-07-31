@@ -6,7 +6,7 @@ s3_bucket = "io.andrewohara.sam"
 profile = "personal"
 region = "ca-central-1"
 capabilities = "CAPABILITY_IAM"
-parameter_overrides = "CorsOrigins=http://localhost:3000"
+parameter_overrides = "CorsOrigins=http://localhost:3000 JwtAudience=735716728591-u8tc4mg8ts7ccnathj66okgb2m4almpo.apps.googleusercontent.com"
 
 [default.sync.parameters]
 stack_name = "getit-api"

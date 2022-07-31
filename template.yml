@@ -3,6 +3,8 @@ Transform: AWS::Serverless-2016-10-31
 Parameters:
   CorsOrigins:
     Type: CommaDelimitedList
+  JwtAudience:
+    Type: String
 
 Globals:
   Function:
@@ -13,6 +15,7 @@ Globals:
         lists_table_name: !Ref Lists
         items_table_name: !Ref Items
         cors_origins: !Join [ ',', !Ref CorsOrigins ]
+        jwt_audience: !Ref JwtAudience
         JAVA_TOOL_OPTIONS: -XX:+TieredCompilation -XX:TieredStopAtLevel=1  # Optimize AOT compilation for cold-start time
 
 Resources:
