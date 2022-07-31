@@ -38,8 +38,8 @@ dependencies {
     implementation("dev.forkhandles:values4k")
 
     // kotest
-    testImplementation(platform("io.kotest:kotest-bom:5.3.2"))
-    testImplementation("io.kotest:kotest-runner-junit5-jvm:5.3.2")
+    testImplementation(platform("io.kotest:kotest-bom:5.4.1"))
+    testImplementation("io.kotest:kotest-runner-junit5-jvm:5.4.1")
     testImplementation("io.kotest:kotest-assertions-core-jvm")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")

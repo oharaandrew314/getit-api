@@ -10,7 +10,6 @@ import java.net.URL
 import java.security.PublicKey
 import java.security.interfaces.RSAPublicKey
 
-
 fun interface Authorizer {
     operator fun invoke(token: String): UserId?
 
@@ -18,12 +17,12 @@ fun interface Authorizer {
 }
 
 private val googleJwkUri = URL("https://www.googleapis.com/oauth2/v3/certs")
-private const val googleIss = "https://accounts.google.com"
+private val googleIss = listOf("https://accounts.google.com", "accounts.google.com")
 
 fun Authorizer.Companion.googleJwt(
     audience: String,
     jwkUri: URL = googleJwkUri,
-    issuer: String = googleIss,
+    issuer: List<String> = googleIss,
 ): Authorizer {
     val jwkProvider = UrlJwkProvider(jwkUri)
     val keyProvider: RSAKeyProvider = object : RSAKeyProvider {
@@ -38,7 +37,7 @@ fun Authorizer.Companion.googleJwt(
 
     val algorithm = Algorithm.RSA256(keyProvider)
     val verifier = JWT.require(algorithm)
-        .withIssuer(issuer)
+        .withIssuer(*issuer.toTypedArray())
         .withAudience(audience)
         .build()
 
