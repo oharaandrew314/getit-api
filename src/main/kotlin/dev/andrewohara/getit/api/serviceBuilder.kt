@@ -5,17 +5,12 @@ import dev.andrewohara.getit.UserId
 import dev.andrewohara.getit.api.security.Authorizer
 import dev.andrewohara.getit.api.v1.apiV1
 import dev.andrewohara.getit.dao.*
-import io.andrewohara.utils.http4k.ContractUi
 import io.andrewohara.utils.http4k.logErrors
 import io.andrewohara.utils.http4k.logSummary
 import org.http4k.cloudnative.env.Environment
 import org.http4k.connect.amazon.dynamodb.DynamoDb
 import org.http4k.connect.amazon.dynamodb.mapper.tableMapper
 import org.http4k.contract.contract
-import org.http4k.contract.openapi.ApiInfo
-import org.http4k.contract.openapi.ApiRenderer
-import org.http4k.contract.openapi.v3.AutoJsonToJsonSchema
-import org.http4k.contract.openapi.v3.OpenApi3
 import org.http4k.contract.security.BearerAuthSecurity
 import org.http4k.core.HttpHandler
 import org.http4k.core.Method
@@ -59,24 +54,10 @@ fun createApi(service: GetItService, authorizer: Authorizer): HttpHandler {
     val authLens = RequestContextKey.required<UserId>(contexts, "auth")
     val bearerSecurity = BearerAuthSecurity(authLens, authorizer::invoke)
 
-    val apiV1 = ContractUi(
-        pageTitle = "GetIt API",
-        contract = contract {
-            renderer = OpenApi3(
-                ApiInfo(
-                    title = "GetIt API",
-                    version = "v1.0"
-                ),
-                json = GetItOpenApiJackson,
-                apiRenderer = ApiRenderer.Auto(GetItOpenApiJackson, AutoJsonToJsonSchema(GetItOpenApiJackson))
-            )
-            descriptionPath =  "/openapi.json"
-            routes += apiV1(authLens, service)
-            security = bearerSecurity
-        },
-        descriptionPath =  "/openapi.json",
-        displayOperationId = true,
-    )
+    val apiV1 = contract {
+        routes += apiV1(authLens, service)
+        security = bearerSecurity
+    }
 
     return ServerFilters.InitialiseRequestContext(contexts)
         .then(ResponseFilters.logSummary())

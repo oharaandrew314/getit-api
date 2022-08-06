@@ -1,14 +1,11 @@
 package dev.andrewohara.getit.api.security
 
-import com.auth0.jwk.UrlJwkProvider
-import com.auth0.jwt.JWT
-import com.auth0.jwt.JWTVerifier
-import com.auth0.jwt.algorithms.Algorithm
-import com.auth0.jwt.interfaces.RSAKeyProvider
+import com.nimbusds.jose.crypto.RSASSAVerifier
+import com.nimbusds.jose.jwk.JWKSet
+import com.nimbusds.jwt.SignedJWT
 import dev.andrewohara.getit.UserId
+import org.slf4j.LoggerFactory
 import java.net.URL
-import java.security.PublicKey
-import java.security.interfaces.RSAPublicKey
 
 fun interface Authorizer {
     operator fun invoke(token: String): UserId?
@@ -19,36 +16,31 @@ fun interface Authorizer {
 private val googleJwkUri = URL("https://www.googleapis.com/oauth2/v3/certs")
 private val googleIss = listOf("https://accounts.google.com", "accounts.google.com")
 
-fun Authorizer.Companion.googleJwt(
-    audience: String,
-    jwkUri: URL = googleJwkUri,
-    issuer: List<String> = googleIss,
-): Authorizer {
-    val jwkProvider = UrlJwkProvider(jwkUri)
-    val keyProvider: RSAKeyProvider = object : RSAKeyProvider {
-        override fun getPublicKeyById(kid: String?): RSAPublicKey {
-            val publicKey: PublicKey = jwkProvider.get(kid).publicKey
-            return publicKey as RSAPublicKey
+fun Authorizer.Companion.jwtRsaNimbus(audience: String, jwkUri: URL = googleJwkUri, issuer: List<String> = googleIss): Authorizer {
+    val publicKeys = JWKSet.load(jwkUri)
+    val log = LoggerFactory.getLogger("root")
+
+    return Authorizer { token ->
+        val jwt = SignedJWT.parse(token)
+        val claims = jwt.jwtClaimsSet
+
+        if (claims.issuer !in issuer) {
+            log.info("JWT failed issuer verification: ${claims.issuer}")
+            return@Authorizer null
+        }
+        if (audience !in claims.audience) {
+            log.info("JWT failed audience verification: ${claims.audience}")
+            return@Authorizer null
         }
 
-        override fun getPrivateKey() = null
-        override fun getPrivateKeyId() = null
+        val key = publicKeys.getKeyByKeyId(jwt.header.keyID).toRSAKey()
+        val verifier = RSASSAVerifier(key)
+
+        kotlin
+            .runCatching { jwt.verify(verifier) }
+            .onFailure { log.error("Error verifying JWT", it) }
+            .map { UserId.of(jwt.jwtClaimsSet.subject) }
+            .getOrNull()
+
     }
-
-    val algorithm = Algorithm.RSA256(keyProvider)
-    val verifier = JWT.require(algorithm)
-        .withIssuer(*issuer.toTypedArray())
-        .withAudience(audience)
-        .build()
-
-    return jwtRsa(verifier)
-}
-
-fun Authorizer.Companion.jwtRsa(verifier: JWTVerifier) = Authorizer { token ->
-    val jwt = JWT.decode(token)
-
-    kotlin
-        .runCatching { verifier.verify(jwt) }
-        .map { UserId.of(jwt.subject) }
-        .getOrNull()
 }

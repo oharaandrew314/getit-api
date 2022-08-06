@@ -1,10 +1,11 @@
 package dev.andrewohara.getit.dao
 
-import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.JsonReader
+import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 import dev.andrewohara.getit.*
+import dev.zacsweers.moshix.reflect.MetadataKotlinJsonAdapterFactory
 import org.http4k.connect.amazon.dynamodb.model.*
 import org.http4k.format.*
 
@@ -24,23 +25,20 @@ object GetItMoshi : ConfigurableMoshi(
     Moshi.Builder()
         .add(MapAdapter)
         .add(ListAdapter)
-        .asConfigurable()
-        .withStandardMappings()
-        .withCustomMappings()
-        .done()
+        .also {
+            it.asConfigurable()
+                .withStandardMappings()
+                .withCustomMappings()
+        }.add(MetadataKotlinJsonAdapterFactory())
+        .add(Unit::class.java, UnitAdapter)
 )
 
-object GetItOpenApiJackson : ConfigurableJackson(
-    KotlinModule.Builder().build()
-        .asConfigurable()
-        .withStandardMappings()
-        .withCustomMappings()
-        .done()
-        .deactivateDefaultTyping()
-        .setSerializationInclusion(JsonInclude.Include.NON_NULL)
-        .configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, true)
-        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        .configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false)
-        .configure(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS, true)
-        .configure(DeserializationFeature.USE_BIG_INTEGER_FOR_INTS, true)
-)
+private object UnitAdapter : JsonAdapter<Unit>() {
+    override fun fromJson(reader: JsonReader) {
+        reader.readJsonValue(); Unit
+    }
+
+    override fun toJson(writer: JsonWriter, value: Unit?) {
+        value?.let { writer.beginObject().endObject() } ?: writer.nullValue()
+    }
+}
