@@ -15,7 +15,7 @@ dependencies {
     implementation("dev.zacsweers.moshix:moshi-metadata-reflect:0.18.3")
 
     // http4k
-    implementation(platform("org.http4k:http4k-bom:4.27.3.0"))
+    implementation(platform("org.http4k:http4k-bom:4.27.4.0"))
     implementation("org.http4k:http4k-core")
     implementation("org.http4k:http4k-serverless-lambda")
     implementation("org.http4k:http4k-contract") {
@@ -23,7 +23,7 @@ dependencies {
     }
     implementation("org.http4k:http4k-cloudnative")
     implementation("org.http4k:http4k-format-moshi") {
-        exclude("org.jetbrains.kotlin", "kotlin-reflect")
+        exclude("com.squareup.moshi", "moshi-kotlin")
     }
     testImplementation("org.http4k:http4k-testing-kotest")
 
