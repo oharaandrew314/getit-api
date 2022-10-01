@@ -2,8 +2,8 @@ package dev.andrewohara.getit.api.v1
 
 import dev.andrewohara.getit.ShoppingItemId
 import dev.andrewohara.getit.ShoppingListId
-import org.http4k.core.Body
 import dev.andrewohara.getit.dao.GetItMoshi.auto
+import org.http4k.core.Body
 import org.http4k.lens.Path
 import org.http4k.lens.value
 

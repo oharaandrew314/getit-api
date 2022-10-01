@@ -1,6 +1,14 @@
 package dev.andrewohara.getit.api.v1
 
-import dev.andrewohara.getit.*
+import dev.andrewohara.getit.ShoppingItem
+import dev.andrewohara.getit.ShoppingItemData
+import dev.andrewohara.getit.ShoppingItemId
+import dev.andrewohara.getit.ShoppingItemName
+import dev.andrewohara.getit.ShoppingList
+import dev.andrewohara.getit.ShoppingListData
+import dev.andrewohara.getit.ShoppingListId
+import dev.andrewohara.getit.ShoppingListName
+import dev.andrewohara.getit.UserId
 
 data class ShoppingListDtoV1(
     val userId: UserId,

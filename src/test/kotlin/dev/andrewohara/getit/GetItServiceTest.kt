@@ -6,7 +6,7 @@ import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
-import java.util.*
+import java.util.UUID
 
 class GetItServiceTest {
 
@@ -126,7 +126,8 @@ class GetItServiceTest {
     fun `update missing item`() {
         val list = driver.createList()
         val itemId = ShoppingItemId.of(UUID.randomUUID())
-        testObj.updateItem(list.userId, list.listId, itemId, itemData) shouldBeFailure ItemNotFound(list.listId, itemId)
+        testObj.updateItem(list.userId, list.listId, itemId, itemData) shouldBeFailure
+            ItemNotFound(list.listId, itemId)
     }
 
     @Test
@@ -136,7 +137,8 @@ class GetItServiceTest {
 
         val otherList = driver.createList()
 
-        testObj.updateItem(list.userId, otherList.listId, item.itemId, itemData) shouldBeFailure ItemNotFound(otherList.listId, item.itemId)
+        testObj.updateItem(list.userId, otherList.listId, item.itemId, itemData) shouldBeFailure
+            ItemNotFound(otherList.listId, item.itemId)
     }
 
     @Test
@@ -144,7 +146,8 @@ class GetItServiceTest {
         val list = driver.createList()
         val item = driver.createItem(list)
 
-        testObj.updateItem(otherUserId, list.listId, item.itemId, itemData) shouldBeFailure ListNotFound(otherUserId, list.listId)
+        testObj.updateItem(otherUserId, list.listId, item.itemId, itemData) shouldBeFailure
+            ListNotFound(otherUserId, list.listId)
     }
 
     @Test
@@ -196,7 +199,8 @@ class GetItServiceTest {
         val listId = ShoppingListId.of(UUID.randomUUID())
         val data = ShoppingListData(name = ShoppingListName.of("Cool Stuff"))
 
-        testObj.updateList(driver.defaultUserId, listId, data) shouldBeFailure ListNotFound(driver.defaultUserId, listId)
+        testObj.updateList(driver.defaultUserId, listId, data) shouldBeFailure
+            ListNotFound(driver.defaultUserId, listId)
     }
 
     @Test
@@ -205,7 +209,8 @@ class GetItServiceTest {
         val otherUser = UserId.of("otherUser")
         val data = ShoppingListData(name = ShoppingListName.of("Cool Stuff"))
 
-        testObj.updateList(otherUser, list.listId, data) shouldBeFailure ListNotFound(otherUser, list.listId)
+        testObj.updateList(otherUser, list.listId, data) shouldBeFailure
+            ListNotFound(otherUser, list.listId)
     }
 
     @Test

@@ -5,8 +5,8 @@ import dev.andrewohara.getit.api.security.jwtRsaNimbus
 import org.http4k.cloudnative.env.Environment
 import org.http4k.connect.amazon.dynamodb.DynamoDb
 import org.http4k.connect.amazon.dynamodb.Http
-import org.http4k.core.*
-import org.http4k.filter.*
+import org.http4k.core.then
+import org.http4k.filter.ServerFilters
 import org.http4k.server.SunHttp
 import org.http4k.server.asServer
 

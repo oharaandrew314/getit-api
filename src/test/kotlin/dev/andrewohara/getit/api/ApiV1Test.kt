@@ -1,7 +1,19 @@
 package dev.andrewohara.getit.api
 
-import dev.andrewohara.getit.*
-import dev.andrewohara.getit.api.v1.*
+import dev.andrewohara.getit.ShoppingItemName
+import dev.andrewohara.getit.ShoppingListId
+import dev.andrewohara.getit.ShoppingListName
+import dev.andrewohara.getit.TestDriver
+import dev.andrewohara.getit.api.v1.ShoppingItemDataDtoV1
+import dev.andrewohara.getit.api.v1.ShoppingListDataDtoV1
+import dev.andrewohara.getit.api.v1.itemArrayV1Lens
+import dev.andrewohara.getit.api.v1.itemDataV1Lens
+import dev.andrewohara.getit.api.v1.itemV1Lens
+import dev.andrewohara.getit.api.v1.listArrayV1Lens
+import dev.andrewohara.getit.api.v1.listDataV1Lens
+import dev.andrewohara.getit.api.v1.listV1Lens
+import dev.andrewohara.getit.api.v1.toDtoV1
+import dev.andrewohara.getit.withUser
 import io.kotest.matchers.be
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.sequences.shouldBeEmpty
@@ -15,7 +27,7 @@ import org.http4k.core.with
 import org.http4k.kotest.shouldHaveBody
 import org.http4k.kotest.shouldHaveStatus
 import org.junit.jupiter.api.Test
-import java.util.*
+import java.util.UUID
 
 class ApiV1Test {
 
@@ -93,7 +105,7 @@ class ApiV1Test {
 
         response shouldHaveStatus Status.OK
         listV1Lens(response).should {
-            it.listId  shouldBe list.listId
+            it.listId shouldBe list.listId
             it.name shouldBe data.name
         }
         driver.listsDao[driver.defaultUserId].shouldContainExactly(list.copy(name = data.name))

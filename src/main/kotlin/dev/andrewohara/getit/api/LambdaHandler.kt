@@ -19,7 +19,6 @@ private val loader = AppLoader { sysEnv ->
 
     ServerFilters.Cors(corsPolicy)
         .then(createApi(service, authorizer))
-
 }
 
-class LambdaHandler: ApiGatewayV2LambdaFunction(loader)
+class LambdaHandler : ApiGatewayV2LambdaFunction(loader)

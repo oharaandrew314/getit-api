@@ -1,7 +1,7 @@
 package dev.andrewohara.getit.dao
 
-import dev.andrewohara.getit.ShoppingItemId
 import dev.andrewohara.getit.ShoppingItem
+import dev.andrewohara.getit.ShoppingItemId
 import dev.andrewohara.getit.ShoppingListId
 import org.http4k.connect.amazon.dynamodb.mapper.DynamoDbTableMapper
 

@@ -16,7 +16,11 @@ fun interface Authorizer {
 private val googleJwkUri = URL("https://www.googleapis.com/oauth2/v3/certs")
 private val googleIss = listOf("https://accounts.google.com", "accounts.google.com")
 
-fun Authorizer.Companion.jwtRsaNimbus(audience: String, jwkUri: URL = googleJwkUri, issuer: List<String> = googleIss): Authorizer {
+fun Authorizer.Companion.jwtRsaNimbus(
+    audience: String,
+    jwkUri: URL = googleJwkUri,
+    issuer: List<String> = googleIss
+): Authorizer {
     val publicKeys = JWKSet.load(jwkUri)
     val log = LoggerFactory.getLogger("root")
 
@@ -41,6 +45,5 @@ fun Authorizer.Companion.jwtRsaNimbus(audience: String, jwkUri: URL = googleJwkU
             .onFailure { log.error("Error verifying JWT", it) }
             .map { UserId.of(jwt.jwtClaimsSet.subject) }
             .getOrNull()
-
     }
 }

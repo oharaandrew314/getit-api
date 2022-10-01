@@ -1,7 +1,11 @@
 package dev.andrewohara.getit.api.v1
 
-import dev.andrewohara.getit.*
-import java.util.*
+import dev.andrewohara.getit.ShoppingItemId
+import dev.andrewohara.getit.ShoppingItemName
+import dev.andrewohara.getit.ShoppingListId
+import dev.andrewohara.getit.ShoppingListName
+import dev.andrewohara.getit.UserId
+import java.util.UUID
 
 val sampleShoppingListDtoV1 = ShoppingListDtoV1(
     userId = UserId.of("user1"),

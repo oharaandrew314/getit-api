@@ -2,7 +2,12 @@ package dev.andrewohara.getit
 
 import dev.andrewohara.getit.dao.DynamoItemsDao
 import dev.andrewohara.getit.dao.DynamoShoppingListDao
-import dev.forkhandles.result4k.*
+import dev.forkhandles.result4k.Result
+import dev.forkhandles.result4k.Success
+import dev.forkhandles.result4k.asResultOr
+import dev.forkhandles.result4k.flatMap
+import dev.forkhandles.result4k.map
+import dev.forkhandles.result4k.peek
 
 class GetItService(private val lists: DynamoShoppingListDao, private val items: DynamoItemsDao) {
 
@@ -25,7 +30,11 @@ class GetItService(private val lists: DynamoShoppingListDao, private val items: 
             .peek { lists -= it }
     }
 
-    fun updateList(userId: UserId, listId: ShoppingListId, data: ShoppingListData): Result<ShoppingList, ShoppingError> {
+    fun updateList(
+        userId: UserId,
+        listId: ShoppingListId,
+        data: ShoppingListData
+    ): Result<ShoppingList, ShoppingError> {
         return lists[userId, listId]
             .asResultOr { ListNotFound(userId, listId) }
             .map { list -> list(data) }
@@ -47,7 +56,12 @@ class GetItService(private val lists: DynamoShoppingListDao, private val items: 
             .peek { item -> items += item }
     }
 
-    fun updateItem(userId: UserId, listId: ShoppingListId, itemId: ShoppingItemId, data: ShoppingItemData): Result<ShoppingItem, ShoppingError>  {
+    fun updateItem(
+        userId: UserId,
+        listId: ShoppingListId,
+        itemId: ShoppingItemId,
+        data: ShoppingItemData
+    ): Result<ShoppingItem, ShoppingError> {
         return lists[userId, listId]
             .asResultOr { ListNotFound(userId, listId) }
             .flatMap { items[listId, itemId].asResultOr { ItemNotFound(listId, itemId) } }
@@ -55,7 +69,11 @@ class GetItService(private val lists: DynamoShoppingListDao, private val items: 
             .peek { item -> items += item }
     }
 
-    fun deleteItem(userId: UserId, listId: ShoppingListId, itemId: ShoppingItemId): Result<ShoppingItem, ShoppingError> {
+    fun deleteItem(
+        userId: UserId,
+        listId: ShoppingListId,
+        itemId: ShoppingItemId
+    ): Result<ShoppingItem, ShoppingError> {
         return lists[userId, listId]
             .asResultOr { ListNotFound(userId, listId) }
             .flatMap { items[listId, itemId].asResultOr { ItemNotFound(listId, itemId) } }
