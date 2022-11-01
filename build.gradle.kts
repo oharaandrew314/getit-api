@@ -12,13 +12,13 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
-    implementation("org.slf4j:slf4j-simple:2.0.1")
+    implementation("org.slf4j:slf4j-simple:2.0.3")
     implementation("com.github.oharaandrew314:service-utils:0.8.4")
-    implementation("com.nimbusds:nimbus-jose-jwt:9.25.1")
-    implementation("dev.zacsweers.moshix:moshi-metadata-reflect:0.18.3")
+    implementation("com.nimbusds:nimbus-jose-jwt:9.25.6")
+    implementation("dev.zacsweers.moshix:moshi-metadata-reflect:0.19.0")
 
     // http4k
-    implementation(platform("org.http4k:http4k-bom:4.32.1.0"))
+    implementation(platform("org.http4k:http4k-bom:4.33.1.0"))
     implementation("org.http4k:http4k-core")
     implementation("org.http4k:http4k-serverless-lambda")
     implementation("org.http4k:http4k-contract")
@@ -29,7 +29,7 @@ dependencies {
     testImplementation("org.http4k:http4k-testing-kotest")
 
     // http4k-connect
-    implementation(platform("org.http4k:http4k-connect-bom:3.21.2.1"))
+    implementation(platform("org.http4k:http4k-connect-bom:3.23.0.0"))
     implementation("org.http4k:http4k-connect-amazon-dynamodb")
     testImplementation("org.http4k:http4k-connect-amazon-dynamodb-fake")
 
@@ -37,11 +37,11 @@ dependencies {
     implementation(platform("dev.forkhandles:forkhandles-bom:2.2.0.0"))
     implementation("dev.forkhandles:result4k")
     implementation("dev.forkhandles:values4k")
-    testImplementation("dev.mrbergin:result4k-kotest-matchers:1.0.0")
+    testImplementation("dev.mrbergin:result4k-kotest-matchers:2022.9.26")
 
     // kotest
-    testImplementation(platform("io.kotest:kotest-bom:5.4.2"))
-    testImplementation("io.kotest:kotest-runner-junit5-jvm:5.4.2")
+    testImplementation(platform("io.kotest:kotest-bom:5.5.2"))
+    testImplementation("io.kotest:kotest-runner-junit5-jvm:5.5.2")
     testImplementation("io.kotest:kotest-assertions-core-jvm")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
