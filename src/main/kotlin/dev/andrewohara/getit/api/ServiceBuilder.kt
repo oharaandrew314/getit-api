@@ -1,6 +1,10 @@
 package dev.andrewohara.getit.api
 
 import dev.andrewohara.getit.GetItService
+import dev.andrewohara.getit.ShoppingItem
+import dev.andrewohara.getit.ShoppingItemId
+import dev.andrewohara.getit.ShoppingList
+import dev.andrewohara.getit.ShoppingListId
 import dev.andrewohara.getit.UserId
 import dev.andrewohara.getit.api.security.Authorizer
 import dev.andrewohara.getit.api.v1.toV1Api
@@ -14,6 +18,7 @@ import io.andrewohara.utils.http4k.logErrors
 import io.andrewohara.utils.http4k.logSummary
 import org.http4k.cloudnative.env.Environment
 import org.http4k.connect.amazon.dynamodb.DynamoDb
+import org.http4k.connect.amazon.dynamodb.mapper.DynamoDbTableMapper
 import org.http4k.connect.amazon.dynamodb.mapper.tableMapper
 import org.http4k.contract.contract
 import org.http4k.contract.security.BearerAuthSecurity
@@ -38,23 +43,24 @@ fun createCorsPolicy(env: Environment) = CorsPolicy(
     credentials = true
 )
 
-fun createService(dynamoDb: DynamoDb, env: Environment) = GetItService(
-    lists = DynamoShoppingListDao(
-        dynamoDb.tableMapper(
-            TableName = listsTableName(env),
-            hashKeyAttribute = userIdAttr,
-            sortKeyAttribute = listIdAttr,
-            autoMarshalling = GetItMoshi
-        )
-    ),
-    items = DynamoItemsDao(
-        dynamoDb.tableMapper(
-            TableName = itemsTableName(env),
-            hashKeyAttribute = listIdAttr,
-            sortKeyAttribute = itemIdAttr,
-            autoMarshalling = GetItMoshi
-        )
+fun createListsMapper(
+    dynamoDb: DynamoDb,
+    env: Environment
+) = dynamoDb.tableMapper<ShoppingList, UserId, ShoppingListId>(
+        TableName = listsTableName(env),
+        hashKeyAttribute = userIdAttr,
+        sortKeyAttribute = listIdAttr,
+        autoMarshalling = GetItMoshi
     )
+
+fun createItemsMapper(
+    dynamoDb: DynamoDb,
+    env: Environment
+) = dynamoDb.tableMapper<ShoppingItem, ShoppingListId, ShoppingItemId>(
+    TableName = itemsTableName(env),
+    hashKeyAttribute = listIdAttr,
+    sortKeyAttribute = itemIdAttr,
+    autoMarshalling = GetItMoshi
 )
 
 fun createApi(service: GetItService, authorizer: Authorizer): HttpHandler {

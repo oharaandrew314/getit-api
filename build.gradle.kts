@@ -3,6 +3,7 @@ import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 plugins {
     kotlin("jvm") version "1.7.20"
     id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
+    id("org.jetbrains.kotlinx.kover") version "0.6.1"
 }
 
 repositories {
@@ -60,5 +61,16 @@ configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
     reporters {
         reporter(ReporterType.CHECKSTYLE)
         reporter(org.jlleitschuh.gradle.ktlint.reporter.ReporterType.HTML)
+    }
+}
+
+kover {
+    verify {
+        onCheck.set(true)
+        rule {
+            bound {
+                minValue = 80
+            }
+        }
     }
 }
