@@ -6,6 +6,7 @@ import dev.andrewohara.getit.ListNotFound
 import dev.andrewohara.getit.ShoppingError
 import dev.andrewohara.getit.ShoppingItem
 import dev.andrewohara.getit.ShoppingList
+import dev.andrewohara.getit.Unauthorized
 import dev.andrewohara.getit.UserId
 import dev.forkhandles.result4k.Result
 import dev.forkhandles.result4k.map
@@ -80,7 +81,7 @@ val deleteItemV1 = "/v1/lists" / listIdLens / "items" / itemIdLens meta {
     returning(Status.OK to "Item deleted", Status.NOT_FOUND to "Item not found")
 } bindContract Method.DELETE
 
-fun GetItService.toV1Api(auth: RequestContextLens<UserId>) = listOf(
+fun GetItService.toV1Routes(auth: RequestContextLens<UserId>) = listOf(
     getListsV1 to { req: Request ->
         getLists(auth(req))
             .map { lists -> Response(Status.OK).with(listArrayV1Lens of lists.map { it.toDtoV1() }.toTypedArray()) }
@@ -149,5 +150,6 @@ private fun Result<Response, ShoppingError>.orErrorResponse() = recover { error 
     when (error) {
         is ListNotFound -> Response(Status.NOT_FOUND)
         is ItemNotFound -> Response(Status.NOT_FOUND)
+        Unauthorized -> Response(Status.UNAUTHORIZED)
     }
 }

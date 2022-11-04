@@ -17,14 +17,14 @@ private val loader = AppLoader { sysEnv ->
     val env = Environment.from(sysEnv)
     val dynamo = DynamoDb.Http(env)
     val service = GetItService(
-        lists = DynamoShoppingListDao(createListsMapper(dynamo, env)),
-        items = DynamoItemsDao(createItemsMapper(dynamo, env))
+        lists = DynamoShoppingListDao(createListsMapper(dynamo, listsTableName(env))),
+        items = DynamoItemsDao(createItemsMapper(dynamo, itemsTableName(env)))
     )
-    val corsPolicy = createCorsPolicy(env)
+    val corsPolicy = createCorsPolicy(corsOrigins(env))
     val authorizer = Authorizer.jwtRsaNimbus(jwtAudience(env))
 
     ServerFilters.Cors(corsPolicy)
-        .then(createApi(service, authorizer))
+        .then(service.toHttp4k(authorizer))
 }
 
 class LambdaHandler : ApiGatewayV2LambdaFunction(loader)

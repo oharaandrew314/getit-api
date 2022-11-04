@@ -1,11 +1,11 @@
-package dev.andrewohara.getit.api
+package dev.andrewohara.getit.api.v1
 
 import io.ktor.http.auth.HttpAuthHeader
 import io.ktor.server.auth.AuthenticationConfig
 import io.ktor.server.auth.AuthenticationContext
 import io.ktor.server.auth.AuthenticationFailedCause
+import io.ktor.server.auth.AuthenticationFunction
 import io.ktor.server.auth.AuthenticationProvider
-import io.ktor.server.auth.Principal
 import io.ktor.server.auth.UnauthorizedResponse
 import io.ktor.server.auth.parseAuthorizationHeader
 import io.ktor.server.response.respond
@@ -15,12 +15,11 @@ class BearerAuthenticationProvider(config: Config): AuthenticationProvider(confi
     private val lookup = config.lookup
 
     override suspend fun onAuthenticate(context: AuthenticationContext) {
-        val call = context.call
-        val authHeader = call.request.parseAuthorizationHeader()
+        val authHeader = context.call.request.parseAuthorizationHeader()
         val principal = (authHeader as? HttpAuthHeader.Single)
             ?.takeIf { it.authScheme.equals("Bearer", ignoreCase = true) }
             ?.blob
-            ?.let(lookup)
+            ?.let { lookup(context.call, it) }
 
         val cause = when {
             authHeader == null -> AuthenticationFailedCause.NoCredentials
@@ -40,7 +39,7 @@ class BearerAuthenticationProvider(config: Config): AuthenticationProvider(confi
     }
 
     class Config(name: String?) : AuthenticationProvider.Config(name) {
-        var lookup: (String) -> Principal? = { null }
+        var lookup: AuthenticationFunction<String> = { null }
     }
 }
 
@@ -48,6 +47,7 @@ fun AuthenticationConfig.bearer(
     name: String? = null,
     configure: BearerAuthenticationProvider.Config.() -> Unit,
 ) {
-    val provider = BearerAuthenticationProvider(BearerAuthenticationProvider.Config(name).apply(configure))
+    val config = BearerAuthenticationProvider.Config(name).apply(configure)
+    val provider = BearerAuthenticationProvider(config)
     register(provider)
 }

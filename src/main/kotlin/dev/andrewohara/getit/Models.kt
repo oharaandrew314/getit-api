@@ -1,29 +1,41 @@
 package dev.andrewohara.getit
 
+import dev.andrewohara.getit.api.v1.ShoppingItemIdSerializer
+import dev.andrewohara.getit.api.v1.ShoppingItemNameSerializer
+import dev.andrewohara.getit.api.v1.ShoppingListIdSerializer
+import dev.andrewohara.getit.api.v1.ShoppingListNameSerializer
+import dev.andrewohara.getit.api.v1.UserIdSerializer
 import dev.forkhandles.values.NonEmptyStringValueFactory
 import dev.forkhandles.values.StringValue
 import dev.forkhandles.values.StringValueFactory
 import dev.forkhandles.values.UUIDValue
 import dev.forkhandles.values.UUIDValueFactory
+import io.ktor.server.auth.Principal
+import kotlinx.serialization.Serializable
 import java.util.UUID
 
-class UserId private constructor(value: String) : StringValue(value) {
+@Serializable(with = UserIdSerializer::class)
+class UserId(value: String) : StringValue(value), Principal {
     companion object : NonEmptyStringValueFactory<UserId>(::UserId)
 }
 
-class ShoppingListId private constructor(value: UUID) : UUIDValue(value) {
+@Serializable(with = ShoppingListIdSerializer::class)
+class ShoppingListId(value: UUID) : UUIDValue(value) {
     companion object : UUIDValueFactory<ShoppingListId>(::ShoppingListId)
 }
 
-class ShoppingItemId private constructor(value: UUID) : UUIDValue(value) {
+@Serializable(with = ShoppingItemIdSerializer::class)
+class ShoppingItemId(value: UUID) : UUIDValue(value) {
     companion object : UUIDValueFactory<ShoppingItemId>(::ShoppingItemId)
 }
 
-class ShoppingListName private constructor(value: String) : StringValue(value) {
+@Serializable(with = ShoppingListNameSerializer::class)
+class ShoppingListName(value: String) : StringValue(value) {
     companion object : NonEmptyStringValueFactory<ShoppingListName>(::ShoppingListName)
 }
 
-class ShoppingItemName private constructor(value: String) : StringValue(value) {
+@Serializable(with = ShoppingItemNameSerializer::class)
+class ShoppingItemName(value: String) : StringValue(value) {
     companion object : StringValueFactory<ShoppingItemName>(::ShoppingItemName)
 }
 
