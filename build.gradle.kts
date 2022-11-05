@@ -25,7 +25,7 @@ dependencies {
     implementation("org.http4k:http4k-contract")
     implementation("org.http4k:http4k-cloudnative")
     implementation("org.http4k:http4k-format-moshi") {
-        exclude("com.squareup.moshi", "moshi-kotlin")
+        exclude("org.jetbrains.kotlin", "kotlin-reflect")
     }
     testImplementation("org.http4k:http4k-testing-kotest")
 
