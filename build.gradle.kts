@@ -39,6 +39,7 @@ dependencies {
     implementation("io.ktor:ktor-server-auth")
     implementation("io.ktor:ktor-server-resources")
     testImplementation("io.ktor:ktor-server-test-host")
+    testImplementation("io.ktor:ktor-client-content-negotiation")
 
     // http4k-connect
     implementation(platform("org.http4k:http4k-connect-bom:3.23.1.0"))

@@ -1,4 +1,4 @@
-package dev.andrewohara.getit.api.v1
+package dev.andrewohara.getit.api.ktor
 
 import io.ktor.http.auth.HttpAuthHeader
 import io.ktor.server.auth.AuthenticationConfig

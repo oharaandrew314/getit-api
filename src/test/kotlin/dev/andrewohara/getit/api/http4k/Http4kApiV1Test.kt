@@ -1,18 +1,12 @@
-package dev.andrewohara.getit.api
+package dev.andrewohara.getit.api.http4k
 
 import dev.andrewohara.getit.ShoppingItemName
 import dev.andrewohara.getit.ShoppingListId
 import dev.andrewohara.getit.ShoppingListName
 import dev.andrewohara.getit.TestDriver
-import dev.andrewohara.getit.api.v1.ShoppingItemDataDtoV1
-import dev.andrewohara.getit.api.v1.ShoppingListDataDtoV1
-import dev.andrewohara.getit.api.v1.itemArrayV1Lens
-import dev.andrewohara.getit.api.v1.itemDataV1Lens
-import dev.andrewohara.getit.api.v1.itemV1Lens
-import dev.andrewohara.getit.api.v1.listArrayV1Lens
-import dev.andrewohara.getit.api.v1.listDataV1Lens
-import dev.andrewohara.getit.api.v1.listV1Lens
-import dev.andrewohara.getit.api.v1.toDtoV1
+import dev.andrewohara.getit.api.ShoppingItemDataDtoV1
+import dev.andrewohara.getit.api.ShoppingListDataDtoV1
+import dev.andrewohara.getit.api.toDtoV1
 import dev.andrewohara.getit.withUser
 import io.kotest.matchers.be
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
@@ -29,7 +23,7 @@ import org.http4k.kotest.shouldHaveStatus
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
-class ApiV1Test {
+class Http4kApiV1Test {
 
     private val driver = TestDriver()
 
@@ -84,8 +78,7 @@ class ApiV1Test {
 
     @Test
     fun `delete list - not found`() {
-        val listId = ShoppingListId.of(UUID.randomUUID())
-        Request(Method.GET, "/v1/lists/$listId")
+        Request(Method.DELETE, "/v1/lists/${UUID.randomUUID()}")
             .withUser(driver.defaultUserId)
             .let(driver)
             .shouldHaveStatus(Status.NOT_FOUND)

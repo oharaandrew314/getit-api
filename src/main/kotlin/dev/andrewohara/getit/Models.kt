@@ -1,10 +1,10 @@
 package dev.andrewohara.getit
 
-import dev.andrewohara.getit.api.v1.ShoppingItemIdSerializer
-import dev.andrewohara.getit.api.v1.ShoppingItemNameSerializer
-import dev.andrewohara.getit.api.v1.ShoppingListIdSerializer
-import dev.andrewohara.getit.api.v1.ShoppingListNameSerializer
-import dev.andrewohara.getit.api.v1.UserIdSerializer
+import dev.andrewohara.getit.api.ShoppingItemIdSerializer
+import dev.andrewohara.getit.api.ShoppingItemNameSerializer
+import dev.andrewohara.getit.api.ShoppingListIdSerializer
+import dev.andrewohara.getit.api.ShoppingListNameSerializer
+import dev.andrewohara.getit.api.UserIdSerializer
 import dev.forkhandles.values.NonEmptyStringValueFactory
 import dev.forkhandles.values.StringValue
 import dev.forkhandles.values.StringValueFactory
@@ -39,6 +39,7 @@ class ShoppingItemName(value: String) : StringValue(value) {
     companion object : StringValueFactory<ShoppingItemName>(::ShoppingItemName)
 }
 
+@Serializable
 data class ShoppingList(
     val userId: UserId,
     val name: ShoppingListName = ShoppingListName.of("Shopping List"),
@@ -53,6 +54,7 @@ data class ShoppingListData(
     val name: ShoppingListName
 )
 
+@Serializable
 data class ShoppingItem(
     val listId: ShoppingListId,
     val name: ShoppingItemName = ShoppingItemName.of(""),

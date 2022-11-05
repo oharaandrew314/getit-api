@@ -1,4 +1,4 @@
-package dev.andrewohara.getit.api.security
+package dev.andrewohara.getit.api
 
 import com.nimbusds.jose.crypto.RSASSAVerifier
 import com.nimbusds.jose.jwk.JWKSet

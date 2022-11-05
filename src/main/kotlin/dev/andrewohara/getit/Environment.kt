@@ -1,4 +1,4 @@
-package dev.andrewohara.getit.api
+package dev.andrewohara.getit
 
 import org.http4k.cloudnative.env.EnvironmentKey
 import org.http4k.connect.amazon.dynamodb.model.TableName

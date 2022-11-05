@@ -1,4 +1,4 @@
-package dev.andrewohara.getit.api.v1
+package dev.andrewohara.getit.api.http4k
 
 import dev.andrewohara.getit.GetItService
 import dev.andrewohara.getit.ItemNotFound
@@ -8,16 +8,33 @@ import dev.andrewohara.getit.ShoppingItem
 import dev.andrewohara.getit.ShoppingList
 import dev.andrewohara.getit.Unauthorized
 import dev.andrewohara.getit.UserId
+import dev.andrewohara.getit.api.Authorizer
+import dev.andrewohara.getit.api.sampleShoppingItemDataDtoV1
+import dev.andrewohara.getit.api.sampleShoppingItemDtoV1
+import dev.andrewohara.getit.api.sampleShoppingListDataDtoV1
+import dev.andrewohara.getit.api.sampleShoppingListDtoV1
+import dev.andrewohara.getit.api.toDtoV1
+import dev.andrewohara.getit.api.toModel
 import dev.forkhandles.result4k.Result
 import dev.forkhandles.result4k.map
 import dev.forkhandles.result4k.recover
+import io.andrewohara.utils.http4k.logErrors
+import io.andrewohara.utils.http4k.logSummary
+import org.http4k.contract.contract
 import org.http4k.contract.div
 import org.http4k.contract.meta
+import org.http4k.contract.security.BearerAuthSecurity
+import org.http4k.core.HttpHandler
 import org.http4k.core.Method
 import org.http4k.core.Request
+import org.http4k.core.RequestContexts
 import org.http4k.core.Response
 import org.http4k.core.Status
+import org.http4k.core.then
 import org.http4k.core.with
+import org.http4k.filter.ResponseFilters
+import org.http4k.filter.ServerFilters
+import org.http4k.lens.RequestContextKey
 import org.http4k.lens.RequestContextLens
 
 private val getListsV1 = "/v1/lists" meta {
@@ -152,4 +169,20 @@ private fun Result<Response, ShoppingError>.orErrorResponse() = recover { error 
         is ItemNotFound -> Response(Status.NOT_FOUND)
         Unauthorized -> Response(Status.UNAUTHORIZED)
     }
+}
+
+fun GetItService.toHttp4k(authorizer: Authorizer): HttpHandler {
+    val contexts = RequestContexts()
+    val authLens = RequestContextKey.required<UserId>(contexts, "auth")
+    val bearerSecurity = BearerAuthSecurity(authLens, authorizer::invoke)
+
+    val apiV1 = contract {
+        routes += toV1Routes(authLens)
+        security = bearerSecurity
+    }
+
+    return ServerFilters.InitialiseRequestContext(contexts)
+        .then(ResponseFilters.logSummary())
+        .then(ServerFilters.logErrors())
+        .then(apiV1)
 }

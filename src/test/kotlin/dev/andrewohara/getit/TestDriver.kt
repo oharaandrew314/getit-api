@@ -1,20 +1,16 @@
 package dev.andrewohara.getit
 
-import dev.andrewohara.getit.api.createItemsMapper
-import dev.andrewohara.getit.api.createListsMapper
-import dev.andrewohara.getit.api.security.Authorizer
-import dev.andrewohara.getit.api.toHttp4k
-import dev.andrewohara.getit.api.v1.bearer
-import dev.andrewohara.getit.api.v1.createAuthorization
-import dev.andrewohara.getit.api.v1.createRoutes
+import dev.andrewohara.getit.api.Authorizer
+import dev.andrewohara.getit.api.http4k.toHttp4k
+import dev.andrewohara.getit.api.ktor.createAuthorization
+import dev.andrewohara.getit.api.ktor.createRoutes
 import dev.andrewohara.getit.dao.DynamoItemsDao
 import dev.andrewohara.getit.dao.DynamoShoppingListDao
 import io.ktor.client.HttpClient
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.install
-import io.ktor.server.auth.Authentication
-import io.ktor.server.auth.basic
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation as ClientContentNegotiation
 import io.ktor.server.resources.Resources
 import io.ktor.server.testing.testApplication
 import org.http4k.connect.amazon.dynamodb.DynamoTable
@@ -77,21 +73,20 @@ class TestDriver : HttpHandler {
     }
 
     operator fun invoke(testFn: suspend (HttpClient) -> Unit) = testApplication {
-        install(ContentNegotiation) {
-            json()
-        }
-
         application {
             install(Resources)
-            install(Authentication) {
-                basic {
-                }
+            install(ContentNegotiation) {
+                json()
             }
-            // createAuthorization(authorizer)
+            createAuthorization(authorizer)
             createRoutes(service)
         }
 
-        val client = createClient {}
+        val client = createClient {
+            install(ClientContentNegotiation) {
+                json()
+            }
+        }
         testFn(client)
     }
 }

@@ -1,8 +1,15 @@
-package dev.andrewohara.getit.api
+package dev.andrewohara.getit.api.http4k
 
 import dev.andrewohara.getit.GetItService
-import dev.andrewohara.getit.api.security.Authorizer
-import dev.andrewohara.getit.api.security.jwtRsaNimbus
+import dev.andrewohara.getit.api.Authorizer
+import dev.andrewohara.getit.corsOrigins
+import dev.andrewohara.getit.createCorsPolicy
+import dev.andrewohara.getit.createItemsMapper
+import dev.andrewohara.getit.createListsMapper
+import dev.andrewohara.getit.itemsTableName
+import dev.andrewohara.getit.jwtAudience
+import dev.andrewohara.getit.api.jwtRsaNimbus
+import dev.andrewohara.getit.listsTableName
 import dev.andrewohara.getit.dao.DynamoItemsDao
 import dev.andrewohara.getit.dao.DynamoShoppingListDao
 import org.http4k.cloudnative.env.Environment
@@ -27,4 +34,4 @@ private val loader = AppLoader { sysEnv ->
         .then(service.toHttp4k(authorizer))
 }
 
-class LambdaHandler : ApiGatewayV2LambdaFunction(loader)
+class Http4kLambdaHandler : ApiGatewayV2LambdaFunction(loader)

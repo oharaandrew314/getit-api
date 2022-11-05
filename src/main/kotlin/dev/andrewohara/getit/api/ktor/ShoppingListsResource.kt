@@ -1,4 +1,4 @@
-package dev.andrewohara.getit.api.v1.resources
+package dev.andrewohara.getit.api.ktor
 
 import dev.andrewohara.getit.ShoppingItemId
 import dev.andrewohara.getit.ShoppingListId
@@ -11,8 +11,8 @@ import java.util.UUID
 class ShoppingListsResource {
     @Serializable
     @Resource("{listId}")
-    data class ListId(val lists: ShoppingListsResource = ShoppingListsResource(), val id: String) {
-        fun toValue() = ShoppingListId(UUID.fromString(id))
+    data class ListId(val lists: ShoppingListsResource = ShoppingListsResource(), val listId: String) {
+        fun toValue() = ShoppingListId(UUID.fromString(listId))
 
         @Serializable
         @Resource("items")
@@ -20,8 +20,8 @@ class ShoppingListsResource {
 
             @Serializable
             @Resource("{itemId}")
-            data class ItemId(val items: Items, val id: String) {
-                fun toValue() = ShoppingItemId(UUID.fromString(id))
+            data class ItemId(val items: Items, val itemId: String) {
+                fun toValue() = ShoppingItemId(UUID.fromString(itemId))
             }
         }
     }

@@ -1,4 +1,4 @@
-package dev.andrewohara.getit.api.v1
+package dev.andrewohara.getit.api
 
 import dev.andrewohara.getit.ShoppingItemId
 import dev.andrewohara.getit.ShoppingItemName
