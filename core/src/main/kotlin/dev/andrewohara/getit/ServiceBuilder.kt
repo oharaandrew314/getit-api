@@ -2,6 +2,7 @@ package dev.andrewohara.getit
 
 import dev.andrewohara.getit.dao.DynamoItemsDao
 import dev.andrewohara.getit.dao.DynamoShoppingListDao
+import dev.andrewohara.getit.dao.GetItDynamoDbJson
 import dev.andrewohara.getit.dao.itemIdAttr
 import dev.andrewohara.getit.dao.listIdAttr
 import dev.andrewohara.getit.dao.userIdAttr
@@ -35,7 +36,7 @@ fun createListsMapper(
     TableName = tableName,
     hashKeyAttribute = userIdAttr,
     sortKeyAttribute = listIdAttr,
-    autoMarshalling = GetItJson
+    autoMarshalling = GetItDynamoDbJson
 )
 
 fun createItemsMapper(
@@ -45,5 +46,5 @@ fun createItemsMapper(
     TableName = tableName,
     hashKeyAttribute = listIdAttr,
     sortKeyAttribute = itemIdAttr,
-    autoMarshalling = GetItJson
+    autoMarshalling = GetItDynamoDbJson
 )
