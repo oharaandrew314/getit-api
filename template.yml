@@ -34,7 +34,7 @@ Resources:
     Type: 'AWS::Serverless::Function'
     Properties:
       Timeout: 10
-      Handler: dev.andrewohara.getit.api.LambdaHandler
+      Handler: dev.andrewohara.getit.Http4kLambdaHandler
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref Lists
