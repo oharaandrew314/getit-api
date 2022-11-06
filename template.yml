@@ -35,6 +35,7 @@ Resources:
     Properties:
       Timeout: 10
       Handler: dev.andrewohara.getit.Http4kLambdaHandler
+      Architectures: [arm64]
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref Lists
