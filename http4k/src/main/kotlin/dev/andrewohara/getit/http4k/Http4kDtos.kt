@@ -14,22 +14,16 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import java.util.UUID
 
-object UUIDSerializer : KSerializer<UUID> {
-    override val descriptor = PrimitiveSerialDescriptor("UUID", PrimitiveKind.STRING)
-
-    override fun deserialize(decoder: Decoder): UUID {
-        return UUID.fromString(decoder.decodeString())
-    }
-
-    override fun serialize(encoder: Encoder, value: UUID) {
-        encoder.encodeString(value.toString())
-    }
+class UuidSerializer : KSerializer<UUID> {
+    override val descriptor = PrimitiveSerialDescriptor("UuidSerializer", PrimitiveKind.STRING)
+    override fun deserialize(decoder: Decoder): UUID = UUID.fromString(decoder.decodeString())
+    override fun serialize(encoder: Encoder, value: UUID) = encoder.encodeString(value.toString())
 }
 
 @Serializable
 data class ShoppingListDtoV1(
     val userId: String,
-    @Serializable(with = UUIDSerializer::class)
+    @Serializable(with = UuidSerializer::class)
     val listId: UUID,
     val name: String
 )
@@ -41,9 +35,9 @@ data class ShoppingListDataDtoV1(
 
 @Serializable
 data class ShoppingItemDtoV1(
-    @Serializable(with = UUIDSerializer::class)
+    @Serializable(with = UuidSerializer::class)
     val listId: UUID,
-    @Serializable(with = UUIDSerializer::class)
+    @Serializable(with = UuidSerializer::class)
     val itemId: UUID,
     val name: String,
     val completed: Boolean
