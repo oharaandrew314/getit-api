@@ -2,10 +2,15 @@ package dev.andrewohara.getit.api.ktor
 
 import dev.andrewohara.getit.ShoppingItem
 import dev.andrewohara.getit.ShoppingItemData
+import dev.andrewohara.getit.ShoppingItemId
 import dev.andrewohara.getit.ShoppingItemName
 import dev.andrewohara.getit.ShoppingList
 import dev.andrewohara.getit.ShoppingListData
+import dev.andrewohara.getit.ShoppingListId
 import dev.andrewohara.getit.ShoppingListName
+import dev.andrewohara.getit.UserId
+import dev.forkhandles.values.Value
+import dev.forkhandles.values.ValueFactory
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.PrimitiveKind
@@ -14,17 +19,22 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import java.util.UUID
 
-class UuidSerializer : KSerializer<UUID> {
+open class Values4KSerializer<T : Value<PRIM>, PRIM : Any>(private val factory: ValueFactory<T, PRIM>) : KSerializer<T> {
     override val descriptor = PrimitiveSerialDescriptor("UuidSerializer", PrimitiveKind.STRING)
-    override fun deserialize(decoder: Decoder): UUID = UUID.fromString(decoder.decodeString())
-    override fun serialize(encoder: Encoder, value: UUID) = encoder.encodeString(value.toString())
+    override fun deserialize(decoder: Decoder): T = factory.parse(decoder.decodeString())
+    override fun serialize(encoder: Encoder, value: T) = encoder.encodeString(factory.show(value))
 }
+
+object UserIdSerializer : Values4KSerializer<UserId, String> (UserId)
+object ListIdSerializer : Values4KSerializer<ShoppingListId, UUID>(ShoppingListId)
+object ItemIdSerializer : Values4KSerializer<ShoppingItemId, UUID>(ShoppingItemId)
 
 @Serializable
 data class ShoppingListDtoV1(
-    val userId: String,
-    @Serializable(with = UuidSerializer::class)
-    val listId: UUID,
+    @Serializable(with = UserIdSerializer::class)
+    val userId: UserId,
+    @Serializable(with = ListIdSerializer::class)
+    val listId: ShoppingListId,
     val name: String
 )
 
@@ -35,10 +45,10 @@ data class ShoppingListDataDtoV1(
 
 @Serializable
 data class ShoppingItemDtoV1(
-    @Serializable(with = UuidSerializer::class)
-    val listId: UUID,
-    @Serializable(with = UuidSerializer::class)
-    val itemId: UUID,
+    @Serializable(with = ListIdSerializer::class)
+    val listId: ShoppingListId,
+    @Serializable(with = ItemIdSerializer::class)
+    val itemId: ShoppingItemId,
     val name: String,
     val completed: Boolean
 )
@@ -50,15 +60,15 @@ data class ShoppingItemDataDtoV1(
 )
 
 fun ShoppingItem.toDtoV1() = ShoppingItemDtoV1(
-    listId = listId.value,
-    itemId = itemId.value,
+    listId = listId,
+    itemId = itemId,
     name = name.value,
     completed = completed
 )
 
 fun ShoppingList.toDtoV1() = ShoppingListDtoV1(
-    userId = userId.value,
-    listId = listId.value,
+    userId = userId,
+    listId = listId,
     name = name.value
 )
 

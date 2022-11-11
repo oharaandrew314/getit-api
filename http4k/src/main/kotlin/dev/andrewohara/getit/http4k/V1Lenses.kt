@@ -1,9 +1,9 @@
 package dev.andrewohara.getit.http4k
 
-import dev.andrewohara.getit.GetItJson.auto
 import dev.andrewohara.getit.ShoppingItemId
 import dev.andrewohara.getit.ShoppingListId
 import org.http4k.core.Body
+import org.http4k.format.KotlinxSerialization.auto
 import org.http4k.lens.Path
 import org.http4k.lens.value
 import java.util.UUID

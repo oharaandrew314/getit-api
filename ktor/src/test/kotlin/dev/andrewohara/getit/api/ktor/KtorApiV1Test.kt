@@ -96,7 +96,7 @@ class KtorApiV1Test {
 
         response.status shouldBe HttpStatusCode.OK
         response.body<ShoppingListDtoV1>() should { updated ->
-            updated.listId shouldBe list.listId.value
+            updated.listId shouldBe list.listId
             updated.name shouldBe data.name
         }
 
@@ -119,7 +119,7 @@ class KtorApiV1Test {
         response.status shouldBe HttpStatusCode.OK
         response.body<ShoppingItemDtoV1>() should { item ->
             item.name shouldBe data.name
-            item.listId shouldBe list.listId.value
+            item.listId shouldBe list.listId
             driver.itemsDao[list.listId].map { it.toDtoV1() }.shouldContainExactly(item)
         }
     }
