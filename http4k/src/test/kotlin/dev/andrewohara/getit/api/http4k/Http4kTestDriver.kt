@@ -29,7 +29,7 @@ class Http4kTestDriver : HttpHandler {
         .also { it.createTable() }
         .let { DynamoItemsDao(it) }
 
-    private val http = GetItService(listsDao, itemsDao).toHttp4k { UserId.of(it) }
+    private val http = GetItService(listsDao, itemsDao).toHttp4k(null) { UserId.of(it) }
     override fun invoke(request: Request) = http(request)
 
     fun createList(

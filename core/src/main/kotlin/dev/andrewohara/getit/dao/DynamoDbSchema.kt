@@ -15,9 +15,10 @@ val listIdAttr = Attribute.uuid().value(ShoppingListId).required("listId")
 val itemIdAttr = Attribute.uuid().value(ShoppingItemId).required("itemId")
 
 internal val GetItDynamoDbJson = DynamoDbMoshi.update {
-    value(ShoppingListId)
-    .value(ShoppingListName)
-    .value(UserId)
-    .value(ShoppingItemId)
-    .value(ShoppingItemName)
+    this
+        .value(ShoppingListId)
+        .value(ShoppingListName)
+        .value(UserId)
+        .value(ShoppingItemId)
+        .value(ShoppingItemName)
 }
