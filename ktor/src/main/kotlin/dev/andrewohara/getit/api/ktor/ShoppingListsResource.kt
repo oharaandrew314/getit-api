@@ -12,7 +12,7 @@ class ShoppingListsResource {
     @Serializable
     @Resource("{listId}")
     data class ListId(val lists: ShoppingListsResource = ShoppingListsResource(), val listId: String) {
-        fun toValue() = ShoppingListId(UUID.fromString(listId))
+        fun toValue() = ShoppingListId.of(UUID.fromString(listId))
 
         @Serializable
         @Resource("items")
@@ -21,7 +21,7 @@ class ShoppingListsResource {
             @Serializable
             @Resource("{itemId}")
             data class ItemId(val items: Items, val itemId: String) {
-                fun toValue() = ShoppingItemId(UUID.fromString(itemId))
+                fun toValue() = ShoppingItemId.of(UUID.fromString(itemId))
             }
         }
     }

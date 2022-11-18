@@ -2,15 +2,15 @@ package dev.andrewohara.getit.api.http4k
 
 import dev.andrewohara.getit.ShoppingItemName
 import dev.andrewohara.getit.ShoppingListName
-import dev.andrewohara.getit.http4k.ShoppingItemDataDtoV1
-import dev.andrewohara.getit.http4k.ShoppingListDataDtoV1
+import dev.andrewohara.getit.api.ShoppingItemDataDtoV1
+import dev.andrewohara.getit.api.ShoppingListDataDtoV1
+import dev.andrewohara.getit.api.toDtoV1
 import dev.andrewohara.getit.http4k.itemArrayV1Lens
 import dev.andrewohara.getit.http4k.itemDataV1Lens
 import dev.andrewohara.getit.http4k.itemV1Lens
 import dev.andrewohara.getit.http4k.listArrayV1Lens
 import dev.andrewohara.getit.http4k.listDataV1Lens
 import dev.andrewohara.getit.http4k.listV1Lens
-import dev.andrewohara.getit.http4k.toDtoV1
 import io.kotest.matchers.be
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.sequences.shouldBeEmpty
@@ -101,7 +101,7 @@ class Http4kApiV1Test {
 
         response shouldHaveStatus Status.OK
         listV1Lens(response).should {
-            it.listId shouldBe list.listId.value
+            it.listId shouldBe list.listId
             it.name shouldBe data.name
         }
         driver.listsDao[driver.defaultUserId].shouldContainExactly(list.copy(name = ShoppingListName.of("Stuff")))
@@ -123,7 +123,7 @@ class Http4kApiV1Test {
         response shouldHaveStatus Status.OK
         itemV1Lens(response).should { item ->
             item.name shouldBe data.name
-            item.listId shouldBe list.listId.value
+            item.listId shouldBe list.listId
             driver.itemsDao[list.listId].map { it.toDtoV1() }.shouldContainExactly(item)
         }
     }

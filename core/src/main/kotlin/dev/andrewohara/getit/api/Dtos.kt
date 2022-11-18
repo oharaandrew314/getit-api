@@ -1,4 +1,4 @@
-package dev.andrewohara.getit.api.ktor
+package dev.andrewohara.getit.api
 
 import dev.andrewohara.getit.ShoppingItem
 import dev.andrewohara.getit.ShoppingItemData
@@ -20,12 +20,12 @@ import kotlinx.serialization.encoding.Encoder
 import java.util.UUID
 
 open class Values4KSerializer<T : Value<PRIM>, PRIM : Any>(private val factory: ValueFactory<T, PRIM>) : KSerializer<T> {
-    override val descriptor = PrimitiveSerialDescriptor("UuidSerializer", PrimitiveKind.STRING)
+    override val descriptor = PrimitiveSerialDescriptor("Values4kSerializer", PrimitiveKind.STRING)
     override fun deserialize(decoder: Decoder): T = factory.parse(decoder.decodeString())
     override fun serialize(encoder: Encoder, value: T) = encoder.encodeString(factory.show(value))
 }
 
-object UserIdSerializer : Values4KSerializer<UserId, String> (UserId)
+object UserIdSerializer : Values4KSerializer<UserId, String>(UserId)
 object ListIdSerializer : Values4KSerializer<ShoppingListId, UUID>(ShoppingListId)
 object ItemIdSerializer : Values4KSerializer<ShoppingItemId, UUID>(ShoppingItemId)
 
@@ -79,4 +79,26 @@ fun ShoppingListDataDtoV1.toModel() = ShoppingListData(
 fun ShoppingItemDataDtoV1.toModel() = ShoppingItemData(
     name = ShoppingItemName.of(name),
     completed = completed
+)
+
+val sampleShoppingListDtoV1 = ShoppingListDtoV1(
+    userId = UserId.of("user1"),
+    listId = ShoppingListId.of(UUID.fromString("b4485c15-bd74-46a1-a7bc-1cc27bf0ed58")),
+    name = "Groceries"
+)
+
+val sampleShoppingListDataDtoV1 = ShoppingListDataDtoV1(
+    name = "Birthday Party"
+)
+
+val sampleShoppingItemDataDtoV1 = ShoppingItemDataDtoV1(
+    name = "chips",
+    completed = false
+)
+
+val sampleShoppingItemDtoV1 = ShoppingItemDtoV1(
+    listId = sampleShoppingListDtoV1.listId,
+    itemId = ShoppingItemId.of(UUID.fromString("8b3fbc45-ffc6-4d63-9b97-b2bf049b8f32")),
+    name = "iced tea",
+    completed = false
 )

@@ -3,6 +3,11 @@ package dev.andrewohara.getit.api.ktor
 import dev.andrewohara.getit.ShoppingItemName
 import dev.andrewohara.getit.ShoppingListName
 import dev.andrewohara.getit.UserId
+import dev.andrewohara.getit.api.ShoppingItemDataDtoV1
+import dev.andrewohara.getit.api.ShoppingItemDtoV1
+import dev.andrewohara.getit.api.ShoppingListDataDtoV1
+import dev.andrewohara.getit.api.ShoppingListDtoV1
+import dev.andrewohara.getit.api.toDtoV1
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.sequences.shouldBeEmpty
 import io.kotest.matchers.sequences.shouldContainExactly

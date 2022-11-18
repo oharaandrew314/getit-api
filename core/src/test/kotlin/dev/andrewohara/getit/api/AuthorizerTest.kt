@@ -26,7 +26,7 @@ class AuthorizerTest {
     fun `verify jwt`() {
         val jwt = javaClass.classLoader.getResourceAsStream("valid.jwt")!!.reader().readText()
 
-        authorizer(jwt) shouldBe UserId("user123")
+        authorizer(jwt) shouldBe UserId.of("user123")
     }
 
     @Test

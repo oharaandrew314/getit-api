@@ -8,6 +8,12 @@ import dev.andrewohara.getit.ShoppingItem
 import dev.andrewohara.getit.ShoppingList
 import dev.andrewohara.getit.Unauthorized
 import dev.andrewohara.getit.UserId
+import dev.andrewohara.getit.api.sampleShoppingItemDataDtoV1
+import dev.andrewohara.getit.api.sampleShoppingItemDtoV1
+import dev.andrewohara.getit.api.sampleShoppingListDataDtoV1
+import dev.andrewohara.getit.api.sampleShoppingListDtoV1
+import dev.andrewohara.getit.api.toDtoV1
+import dev.andrewohara.getit.api.toModel
 import dev.forkhandles.result4k.Result
 import dev.forkhandles.result4k.map
 import dev.forkhandles.result4k.recover

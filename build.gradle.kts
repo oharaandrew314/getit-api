@@ -20,8 +20,9 @@ allprojects {
     dependencies {
         implementation(platform("io.ktor:ktor-bom:2.1.3"))
         implementation(platform("org.http4k:http4k-bom:4.33.3.0"))
-        implementation(platform("org.http4k:http4k-connect-bom:3.24.0.0"))
+        implementation(platform("org.http4k:http4k-connect-bom:3.25.4.0"))
         implementation(platform("dev.forkhandles:forkhandles-bom:2.3.0.0"))
+        implementation(platform("org.jetbrains.kotlinx:kotlinx-serialization-bom:1.4.1"))
 
         implementation(kotlin("stdlib-jdk8"))
         implementation("org.slf4j:slf4j-simple:2.0.3")
@@ -63,8 +64,6 @@ allprojects {
 
 dependencies {
     implementation(project("http4k"))
-    compileOnly(project(":ktor"))
-
     implementation("org.http4k:http4k-cloudnative")
     implementation("org.http4k:http4k-serverless-lambda")
 
@@ -76,4 +75,8 @@ kover {
     verify {
         isDisabled.set(true)
     }
+}
+
+koverMerged {
+    enable()
 }

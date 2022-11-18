@@ -7,23 +7,23 @@ import dev.forkhandles.values.UUIDValue
 import dev.forkhandles.values.UUIDValueFactory
 import java.util.UUID
 
-class UserId(value: String) : StringValue(value) {
+class UserId private constructor(value: String) : StringValue(value) {
     companion object : NonEmptyStringValueFactory<UserId>(::UserId)
 }
 
-class ShoppingListId(value: UUID) : UUIDValue(value) {
+class ShoppingListId private constructor(value: UUID) : UUIDValue(value) {
     companion object : UUIDValueFactory<ShoppingListId>(::ShoppingListId)
 }
 
-class ShoppingItemId(value: UUID) : UUIDValue(value) {
+class ShoppingItemId private constructor(value: UUID) : UUIDValue(value) {
     companion object : UUIDValueFactory<ShoppingItemId>(::ShoppingItemId)
 }
 
-class ShoppingListName(value: String) : StringValue(value) {
+class ShoppingListName private constructor(value: String) : StringValue(value) {
     companion object : NonEmptyStringValueFactory<ShoppingListName>(::ShoppingListName)
 }
 
-class ShoppingItemName(value: String) : StringValue(value) {
+class ShoppingItemName private constructor(value: String) : StringValue(value) {
     companion object : StringValueFactory<ShoppingItemName>(::ShoppingItemName)
 }
 

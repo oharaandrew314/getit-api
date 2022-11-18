@@ -7,6 +7,10 @@ import dev.andrewohara.getit.ShoppingError
 import dev.andrewohara.getit.ShoppingItem
 import dev.andrewohara.getit.ShoppingList
 import dev.andrewohara.getit.Unauthorized
+import dev.andrewohara.getit.api.ShoppingItemDataDtoV1
+import dev.andrewohara.getit.api.ShoppingListDataDtoV1
+import dev.andrewohara.getit.api.toDtoV1
+import dev.andrewohara.getit.api.toModel
 import dev.forkhandles.result4k.Result
 import dev.forkhandles.result4k.asResultOr
 import dev.forkhandles.result4k.flatMap
