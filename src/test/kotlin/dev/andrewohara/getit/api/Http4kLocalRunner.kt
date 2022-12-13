@@ -29,5 +29,6 @@ fun main(args: Array<String>) {
     )
         .asServer(SunHttp(port))
         .start()
+        .also { println("Server running on port $port") }
         .block()
 }
