@@ -9,6 +9,7 @@ import dev.andrewohara.getit.listsTableName
 import org.http4k.cloudnative.env.Environment
 import org.http4k.connect.amazon.CredentialsProvider
 import org.http4k.connect.amazon.Profile
+import org.http4k.connect.amazon.RegionProvider
 import org.http4k.connect.amazon.dynamodb.DynamoDb
 import org.http4k.connect.amazon.dynamodb.Http
 import org.http4k.server.SunHttp
@@ -17,7 +18,7 @@ import org.http4k.server.asServer
 fun main(args: Array<String>) {
     val port = args.firstOrNull()?.toInt() ?: 8080
     val env = Environment.ENV
-    val dynamoDb = DynamoDb.Http(env, credentialsProvider = CredentialsProvider.Profile(env))
+    val dynamoDb = DynamoDb.Http(RegionProvider.Profile(env).orElseThrow(), CredentialsProvider.Profile(env))
 
     createService(
         dynamoDb,
@@ -29,6 +30,6 @@ fun main(args: Array<String>) {
     )
         .asServer(SunHttp(port))
         .start()
-        .also { println("Server running on port $port") }
+        .also { println("Server running on http://localhost:$port") }
         .block()
 }

@@ -4,6 +4,8 @@ import dev.andrewohara.getit.ShoppingItem
 import dev.andrewohara.getit.ShoppingItemId
 import dev.andrewohara.getit.ShoppingListId
 import org.http4k.connect.amazon.dynamodb.mapper.DynamoDbTableMapper
+import org.http4k.connect.amazon.dynamodb.mapper.minusAssign
+import org.http4k.connect.amazon.dynamodb.mapper.plusAssign
 
 class DynamoItemsDao(private val table: DynamoDbTableMapper<ShoppingItem, ShoppingListId, ShoppingItemId>) {
 

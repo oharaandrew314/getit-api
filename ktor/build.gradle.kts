@@ -1,6 +1,4 @@
-plugins {
-    kotlin("plugin.serialization") version "1.7.20"
-}
+apply(plugin = "kotlinx-serialization")
 
 dependencies {
     api(project(":core"))

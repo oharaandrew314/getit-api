@@ -29,7 +29,7 @@ import org.http4k.lens.RequestContextLens
 private val getListsV1 = "/v1/lists" meta {
     operationId = "getListsV1"
     summary = "Get your Shopping Lists"
-    returning(Status.OK, listArrayV1Lens to arrayOf(sampleShoppingListDtoV1))
+    returning(Status.OK, listArrayV1Lens to listOf(sampleShoppingListDtoV1))
 } bindContract Method.GET
 
 val createListV1 = "/v1/lists" meta {
@@ -52,10 +52,8 @@ val updateListV1 = "/v1/lists" / listIdLens meta {
     operationId = "updateListV1"
     summary = "Update List"
     receiving(listDataV1Lens to sampleShoppingListDataDtoV1)
-    returning(
-        Status.OK to "List deleted",
-        Status.NOT_FOUND to "List not found"
-    )
+    returning(Status.OK, listV1Lens to sampleShoppingListDtoV1)
+    returning(Status.NOT_FOUND to "List not found")
 } bindContract Method.PUT
 
 val addItemV1 = "/v1/lists" / listIdLens / "items" meta {
@@ -69,7 +67,7 @@ val addItemV1 = "/v1/lists" / listIdLens / "items" meta {
 val getItemsV1 = "/v1/lists" / listIdLens / "items" meta {
     operationId = "getItemsV1"
     summary = "Get Items for List"
-    returning(Status.OK, itemArrayV1Lens to arrayOf(sampleShoppingItemDtoV1))
+    returning(Status.OK, itemArrayV1Lens to listOf(sampleShoppingItemDtoV1))
     returning(Status.NOT_FOUND to "List not found")
 } bindContract Method.GET
 
@@ -90,7 +88,7 @@ val deleteItemV1 = "/v1/lists" / listIdLens / "items" / itemIdLens meta {
 fun GetItService.toV1Routes(auth: RequestContextLens<UserId>) = listOf(
     getListsV1 to { req: Request ->
         getLists(auth(req))
-            .map { lists -> Response(Status.OK).with(listArrayV1Lens of lists.map { it.toDtoV1() }.toTypedArray()) }
+            .map { lists -> Response(Status.OK).with(listArrayV1Lens of lists.map { it.toDtoV1() }) }
             .orErrorResponse()
     },
 
@@ -123,7 +121,7 @@ fun GetItService.toV1Routes(auth: RequestContextLens<UserId>) = listOf(
     getItemsV1 to { listId, _ ->
         { req ->
             getItems(auth(req), listId)
-                .map { items -> Response(Status.OK).with(itemArrayV1Lens of items.map { it.toDtoV1() }.toTypedArray()) }
+                .map { items -> Response(Status.OK).with(itemArrayV1Lens of items.map { it.toDtoV1() }) }
                 .orErrorResponse()
         }
     },

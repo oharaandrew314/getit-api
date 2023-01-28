@@ -1,7 +1,8 @@
 import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 
 plugins {
-    kotlin("jvm") version "1.7.21"
+    kotlin("jvm") version "1.8.0"
+    kotlin("plugin.serialization") version "1.8.0"
     id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
     id("org.jetbrains.kotlinx.kover") version "0.6.1"
     id("com.github.johnrengelman.shadow") version "7.1.2"
@@ -19,15 +20,14 @@ allprojects {
 
     dependencies {
         implementation(platform("io.ktor:ktor-bom:2.2.1"))
-        implementation(platform("org.http4k:http4k-bom:4.34.3.1"))
-        implementation(platform("org.http4k:http4k-connect-bom:3.25.5.0"))
+        implementation(platform("org.http4k:http4k-bom:4.37.0.0"))
+        implementation(platform("org.http4k:http4k-connect-bom:3.27.1.0"))
         implementation(platform("dev.forkhandles:forkhandles-bom:2.3.0.0"))
         implementation(platform("org.jetbrains.kotlinx:kotlinx-serialization-bom:1.4.1"))
 
         implementation(kotlin("stdlib-jdk8"))
         implementation("org.slf4j:slf4j-simple:2.0.6")
-
-        testImplementation(platform("io.kotest:kotest-bom:5.5.4"))
+        implementation("com.github.oharaandrew314:service-utils:0.9.0")
 
         testImplementation("io.kotest:kotest-assertions-core-jvm:5.5.4")
         testImplementation("org.http4k:http4k-connect-amazon-dynamodb-fake")
@@ -67,7 +67,7 @@ dependencies {
     implementation("org.http4k:http4k-serverless-lambda")
 
     testImplementation(project(":ktor"))
-    testImplementation("io.ktor:ktor-server-netty")
+    testImplementation("io.ktor:ktor-server-cio")
 }
 
 kover {

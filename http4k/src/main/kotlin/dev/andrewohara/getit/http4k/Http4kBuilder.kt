@@ -8,6 +8,7 @@ import io.andrewohara.utils.http4k.logSummary
 import org.http4k.contract.contract
 import org.http4k.contract.openapi.ApiInfo
 import org.http4k.contract.openapi.v3.OpenApi3
+import org.http4k.contract.openapi.v3.OpenApi3ApiRenderer
 import org.http4k.contract.security.BearerAuthSecurity
 import org.http4k.contract.ui.swaggerUi
 import org.http4k.core.HttpHandler
@@ -21,6 +22,7 @@ import org.http4k.filter.CorsPolicy
 import org.http4k.filter.OriginPolicy
 import org.http4k.filter.ResponseFilters
 import org.http4k.filter.ServerFilters
+import org.http4k.format.KotlinxSerialization
 import org.http4k.lens.RequestContextKey
 import org.http4k.routing.routes
 
@@ -39,7 +41,11 @@ fun GetItService.toHttp4k(corsOrigins: List<String>?, authorizer: Authorizer): H
     val bearerSecurity = BearerAuthSecurity(authLens, authorizer::invoke)
 
     val apiV1 = contract {
-        renderer = OpenApi3(ApiInfo("GetIt Api", "1"))
+        renderer = OpenApi3(
+            apiInfo = ApiInfo("GetIt Api", "1"),
+            json = KotlinxSerialization,
+            apiRenderer = OpenApi3ApiRenderer(KotlinxSerialization)
+        )
         descriptionPath = "/openapi"
         routes += toV1Routes(authLens)
         security = bearerSecurity

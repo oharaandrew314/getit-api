@@ -14,8 +14,8 @@ import org.http4k.lens.value
 val itemIdLens = Path.value(ShoppingItemId).of("item_id")
 val listIdLens = Path.value(ShoppingListId).of("list_id")
 
-val itemArrayV1Lens = Body.auto<Array<ShoppingItemDtoV1>>().toLens()
-val listArrayV1Lens = Body.auto<Array<ShoppingListDtoV1>>().toLens()
+val itemArrayV1Lens = Body.auto<List<ShoppingItemDtoV1>>().toLens()
+val listArrayV1Lens = Body.auto<List<ShoppingListDtoV1>>().toLens()
 val itemV1Lens = Body.auto<ShoppingItemDtoV1>().toLens()
 val listV1Lens = Body.auto<ShoppingListDtoV1>().toLens()
 val listDataV1Lens = Body.auto<ShoppingListDataDtoV1>().toLens()
