@@ -46,7 +46,7 @@ fun Authorizer.Companion.jwt(
         val jwt = try {
             SignedJWT.parse(token)
         } catch (e: ParseException) {
-            logger.warn("Error parsing JWT", e)
+            logger.warn("Error parsing JWT: ${e.message}")
             return@Authorizer null
         }
 
