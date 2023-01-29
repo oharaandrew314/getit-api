@@ -21,7 +21,7 @@ class Http4kTestDriver : HttpHandler {
 
     val defaultUserId = UserId.of("123")
 
-    val listsDao = createListsMapper(dynamoDb, TableName.of("lists"),)
+    val listsDao = createListsMapper(dynamoDb, TableName.of("lists"))
         .also { it.createTable() }
         .let { DynamoShoppingListDao(it) }
 
