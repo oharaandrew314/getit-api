@@ -2,10 +2,8 @@ package dev.andrewohara.getit.spring
 
 import dev.andrewohara.getit.UserId
 import dev.andrewohara.getit.api.Authorizer
-import dev.andrewohara.getit.createItemsMapper
-import dev.andrewohara.getit.createListsMapper
-import dev.andrewohara.getit.dao.DynamoItemsDao
-import dev.andrewohara.getit.dao.DynamoShoppingListDao
+import dev.andrewohara.getit.dao.DynamoItemsDao.Companion.itemsDao
+import dev.andrewohara.getit.dao.DynamoListsDao.Companion.listsDao
 import org.http4k.connect.amazon.dynamodb.FakeDynamoDb
 import org.http4k.connect.amazon.dynamodb.model.TableName
 import org.springframework.context.annotation.Bean
@@ -21,17 +19,13 @@ class TestConfig {
 
     @Bean
     @Primary
-    fun authorizer2() = Authorizer { UserId.of(it) }
+    fun faeAuthorizer() = Authorizer { UserId.of(it) }
 
     @Bean
     @Primary
-    fun listsDao2() = createListsMapper(dynamoDb, TableName.of("lists"))
-        .also { it.createTable() }
-        .let { DynamoShoppingListDao(it) }
+    fun fakeListsDao() = dynamoDb.listsDao(TableName.of("lists"), create = true)
 
     @Bean
     @Primary
-    fun itemsDao2() = createItemsMapper(dynamoDb, TableName.of("items"))
-        .also { it.createTable() }
-        .let { DynamoItemsDao(it) }
+    fun fakeItemsDao() = dynamoDb.itemsDao(TableName.of("items"), create = true)
 }

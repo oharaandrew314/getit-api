@@ -1,23 +1,16 @@
 package dev.andrewohara.getit
 
-import dev.andrewohara.getit.dao.DynamoItemsDao
-import dev.andrewohara.getit.dao.DynamoShoppingListDao
+import dev.andrewohara.getit.dao.DynamoItemsDao.Companion.itemsDao
+import dev.andrewohara.getit.dao.DynamoListsDao.Companion.listsDao
 import org.http4k.connect.amazon.dynamodb.FakeDynamoDb
 import org.http4k.connect.amazon.dynamodb.model.TableName
 
 class TestDriver {
-
-    private val dynamoDb = FakeDynamoDb().client()
-
     val defaultUserId = UserId.of("123")
 
-    val listsDao = createListsMapper(dynamoDb, TableName.of("lists"),)
-        .also { it.createTable() }
-        .let { DynamoShoppingListDao(it) }
-
-    val itemsDao = createItemsMapper(dynamoDb, TableName.of("items"))
-        .also { it.createTable() }
-        .let { DynamoItemsDao(it) }
+    private val dynamoDb = FakeDynamoDb().client()
+    val listsDao = dynamoDb.listsDao(TableName.of("lists"), create = true)
+    val itemsDao = dynamoDb.itemsDao(TableName.of("items"), create = true)
 
     val service = GetItService(listsDao, itemsDao)
 

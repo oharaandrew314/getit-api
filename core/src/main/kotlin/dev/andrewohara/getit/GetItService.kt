@@ -1,7 +1,7 @@
 package dev.andrewohara.getit
 
 import dev.andrewohara.getit.dao.DynamoItemsDao
-import dev.andrewohara.getit.dao.DynamoShoppingListDao
+import dev.andrewohara.getit.dao.DynamoListsDao
 import dev.forkhandles.result4k.Result
 import dev.forkhandles.result4k.Success
 import dev.forkhandles.result4k.asResultOr
@@ -9,7 +9,7 @@ import dev.forkhandles.result4k.flatMap
 import dev.forkhandles.result4k.map
 import dev.forkhandles.result4k.peek
 
-class GetItService(private val lists: DynamoShoppingListDao, private val items: DynamoItemsDao) {
+class GetItService(private val lists: DynamoListsDao, private val items: DynamoItemsDao) {
 
     // lists
 

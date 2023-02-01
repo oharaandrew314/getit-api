@@ -3,7 +3,7 @@ package dev.andrewohara.getit.spring
 import dev.andrewohara.getit.GetItService
 import dev.andrewohara.getit.api.Authorizer
 import dev.andrewohara.getit.dao.DynamoItemsDao
-import dev.andrewohara.getit.dao.DynamoShoppingListDao
+import dev.andrewohara.getit.dao.DynamoListsDao
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.builder.SpringApplicationBuilder
 import org.springframework.context.annotation.Bean
@@ -19,7 +19,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 class GetItSpringApp {
 
     @Bean
-    fun service(listsDao: DynamoShoppingListDao, itemsDao: DynamoItemsDao) = GetItService(
+    fun service(listsDao: DynamoListsDao, itemsDao: DynamoItemsDao) = GetItService(
         items = itemsDao,
         lists = listsDao
     )

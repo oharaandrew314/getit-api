@@ -1,8 +1,8 @@
 package dev.andrewohara.getit
 
 import dev.andrewohara.getit.api.Authorizer
-import dev.andrewohara.getit.dao.DynamoItemsDao
-import dev.andrewohara.getit.dao.DynamoShoppingListDao
+import dev.andrewohara.getit.dao.DynamoItemsDao.Companion.itemsDao
+import dev.andrewohara.getit.dao.DynamoListsDao.Companion.listsDao
 import dev.andrewohara.getit.http4k.toHttp4k
 import org.http4k.cloudnative.env.Environment
 import org.http4k.connect.amazon.dynamodb.DynamoDb
@@ -15,8 +15,8 @@ private val loader = AppLoader { sysEnv ->
     val dynamo = DynamoDb.Http(env)
 
     GetItService(
-        lists = DynamoShoppingListDao(createListsMapper(dynamo, listsTableName(env))),
-        items = DynamoItemsDao(createItemsMapper(dynamo, itemsTableName(env)))
+        lists = dynamo.listsDao(listsTableName(env)),
+        items = dynamo.itemsDao(itemsTableName(env))
     ).toHttp4k(
         authorizer = Authorizer.googleJwt(env),
         corsOrigins = corsOrigins(env)

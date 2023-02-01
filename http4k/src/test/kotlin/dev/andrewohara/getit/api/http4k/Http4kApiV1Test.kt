@@ -101,7 +101,7 @@ class Http4kApiV1Test {
 
         response shouldHaveStatus Status.OK
         listV1Lens(response).should {
-            it.listId shouldBe list.listId
+            it.listId shouldBe list.listId.toString()
             it.name shouldBe data.name
         }
         driver.listsDao[driver.defaultUserId].shouldContainExactly(list.copy(name = ShoppingListName.of("Stuff")))
@@ -123,7 +123,7 @@ class Http4kApiV1Test {
         response shouldHaveStatus Status.OK
         itemV1Lens(response).should { item ->
             item.name shouldBe data.name
-            item.listId shouldBe list.listId
+            item.listId shouldBe list.listId.toString()
             driver.itemsDao[list.listId].map { it.toDtoV1() }.shouldContainExactly(item)
         }
     }

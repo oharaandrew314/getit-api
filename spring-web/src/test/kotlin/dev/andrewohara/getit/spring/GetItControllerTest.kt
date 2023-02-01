@@ -11,7 +11,7 @@ import dev.andrewohara.getit.api.ShoppingListDataDtoV1
 import dev.andrewohara.getit.api.ShoppingListDtoV1
 import dev.andrewohara.getit.api.toDtoV1
 import dev.andrewohara.getit.dao.DynamoItemsDao
-import dev.andrewohara.getit.dao.DynamoShoppingListDao
+import dev.andrewohara.getit.dao.DynamoListsDao
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.nulls.shouldNotBeNull
@@ -37,7 +37,7 @@ import java.net.URI
 class GetItControllerTest(
     @Autowired val restTemplate: TestRestTemplate,
     @Autowired val items: DynamoItemsDao,
-    @Autowired val lists: DynamoShoppingListDao
+    @Autowired val lists: DynamoListsDao
 ) {
 
     private val user1 = UserId.of("user1")
@@ -79,7 +79,7 @@ class GetItControllerTest(
 
         val created = response.body.shouldNotBeNull()
         created.name shouldBe "new list"
-        created.userId shouldBe user1
+        created.userId shouldBe user1.toString()
 
         lists[user1].map { it.toDtoV1() }.toList().shouldContainExactly(created)
     }
@@ -156,7 +156,7 @@ class GetItControllerTest(
         response.statusCode shouldBe HttpStatus.OK
 
         val created = response.body.shouldNotBeNull()
-        created.listId shouldBe list1.listId
+        created.listId shouldBe list1.listId.toString()
         created.name shouldBe "eggs"
         created.completed shouldBe false
 

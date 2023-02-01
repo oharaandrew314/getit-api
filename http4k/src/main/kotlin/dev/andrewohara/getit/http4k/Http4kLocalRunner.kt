@@ -1,9 +1,11 @@
-package dev.andrewohara.getit.api
+package dev.andrewohara.getit.http4k
 
+import dev.andrewohara.getit.GetItService
+import dev.andrewohara.getit.api.Authorizer
 import dev.andrewohara.getit.corsOrigins
-import dev.andrewohara.getit.createService
+import dev.andrewohara.getit.dao.DynamoItemsDao.Companion.itemsDao
+import dev.andrewohara.getit.dao.DynamoListsDao.Companion.listsDao
 import dev.andrewohara.getit.googleJwt
-import dev.andrewohara.getit.http4k.toHttp4k
 import dev.andrewohara.getit.itemsTableName
 import dev.andrewohara.getit.listsTableName
 import org.http4k.cloudnative.env.Environment
@@ -20,10 +22,9 @@ fun main(args: Array<String>) {
     val env = Environment.ENV
     val dynamoDb = DynamoDb.Http(RegionProvider.Profile(env).orElseThrow(), CredentialsProvider.Profile(env))
 
-    createService(
-        dynamoDb,
-        listsTableName = listsTableName(env),
-        itemsTableName = itemsTableName(env)
+    GetItService(
+        lists = dynamoDb.listsDao(listsTableName(env)),
+        items = dynamoDb.itemsDao(itemsTableName(env))
     ).toHttp4k(
         corsOrigins = corsOrigins(env),
         authorizer = Authorizer.googleJwt(env)

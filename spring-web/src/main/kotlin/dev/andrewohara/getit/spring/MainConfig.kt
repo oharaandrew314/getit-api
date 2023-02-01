@@ -5,17 +5,16 @@ import dev.andrewohara.getit.api.GetVerifier
 import dev.andrewohara.getit.api.googleJwkUri
 import dev.andrewohara.getit.api.jwt
 import dev.andrewohara.getit.api.rsaJwks
-import dev.andrewohara.getit.createItemsMapper
-import dev.andrewohara.getit.createListsMapper
-import dev.andrewohara.getit.dao.DynamoItemsDao
-import dev.andrewohara.getit.dao.DynamoShoppingListDao
+import dev.andrewohara.getit.dao.DynamoItemsDao.Companion.itemsDao
+import dev.andrewohara.getit.dao.DynamoListsDao.Companion.listsDao
+import dev.andrewohara.getit.itemsTableName
+import dev.andrewohara.getit.listsTableName
 import org.http4k.cloudnative.env.Environment
 import org.http4k.connect.amazon.CredentialsProvider
 import org.http4k.connect.amazon.Profile
 import org.http4k.connect.amazon.RegionProvider
 import org.http4k.connect.amazon.dynamodb.DynamoDb
 import org.http4k.connect.amazon.dynamodb.Http
-import org.http4k.connect.amazon.dynamodb.model.TableName
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
@@ -27,11 +26,8 @@ class MainConfig {
     private val env = Environment.ENV
     private val dynamoDb = DynamoDb.Http(RegionProvider.Profile(env).orElseThrow(), CredentialsProvider.Profile(env))
 
-    @Bean
-    fun listsDao() = DynamoShoppingListDao(createListsMapper(dynamoDb, TableName.of(env["lists_table_name"]!!)))
-
-    @Bean
-    fun itemsDao() = DynamoItemsDao(createItemsMapper(dynamoDb, TableName.of(env["items_table_name"]!!)))
+    @Bean fun listsDao() = dynamoDb.listsDao(listsTableName(env))
+    @Bean fun itemsDao() = dynamoDb.itemsDao(itemsTableName(env))
 
     @Bean
     fun authorizer(): Authorizer = Authorizer.jwt(

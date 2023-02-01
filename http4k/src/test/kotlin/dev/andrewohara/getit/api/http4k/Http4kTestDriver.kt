@@ -6,10 +6,8 @@ import dev.andrewohara.getit.ShoppingItemName
 import dev.andrewohara.getit.ShoppingList
 import dev.andrewohara.getit.ShoppingListName
 import dev.andrewohara.getit.UserId
-import dev.andrewohara.getit.createItemsMapper
-import dev.andrewohara.getit.createListsMapper
-import dev.andrewohara.getit.dao.DynamoItemsDao
-import dev.andrewohara.getit.dao.DynamoShoppingListDao
+import dev.andrewohara.getit.dao.DynamoItemsDao.Companion.itemsDao
+import dev.andrewohara.getit.dao.DynamoListsDao.Companion.listsDao
 import dev.andrewohara.getit.http4k.toHttp4k
 import org.http4k.connect.amazon.dynamodb.FakeDynamoDb
 import org.http4k.connect.amazon.dynamodb.model.TableName
@@ -21,13 +19,8 @@ class Http4kTestDriver : HttpHandler {
 
     val defaultUserId = UserId.of("123")
 
-    val listsDao = createListsMapper(dynamoDb, TableName.of("lists"))
-        .also { it.createTable() }
-        .let { DynamoShoppingListDao(it) }
-
-    val itemsDao = createItemsMapper(dynamoDb, TableName.of("items"))
-        .also { it.createTable() }
-        .let { DynamoItemsDao(it) }
+    val listsDao = dynamoDb.listsDao(TableName.of("lists"), create = true)
+    val itemsDao = dynamoDb.itemsDao(TableName.of("items"), create = true)
 
     private val http = GetItService(listsDao, itemsDao).toHttp4k(null) { UserId.of(it) }
     override fun invoke(request: Request) = http(request)
