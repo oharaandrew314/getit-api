@@ -31,5 +31,4 @@ Alternate RESTful implementation for the core module.
 
 ### Root
 
-- local runners for http4k and ktor
 - Lambda deployment package for the http4k module
