@@ -5,10 +5,15 @@ plugins {
 }
 
 dependencies {
+    implementation(platform("org.springdoc:springdoc-openapi:1.6.14"))
+
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-security")
     api(project(":core"))
 
+    runtimeOnly("org.springdoc:springdoc-openapi-ui")
+    runtimeOnly("org.springdoc:springdoc-openapi-security")
+    runtimeOnly("org.springdoc:springdoc-openapi-kotlin")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }

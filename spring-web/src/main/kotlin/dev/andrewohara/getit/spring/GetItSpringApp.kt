@@ -27,7 +27,8 @@ class GetItSpringApp {
     @Bean
     fun security(http: HttpSecurity, authorizer: Authorizer): SecurityFilterChain = http
         .authorizeRequests {
-            it.anyRequest().authenticated()
+            it.antMatchers("/v1/**").authenticated()
+                .anyRequest().permitAll()
         }.exceptionHandling {
             it.authenticationEntryPoint(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
         }
@@ -41,5 +42,8 @@ class GetItSpringApp {
 fun main(args: Array<String>) {
     SpringApplicationBuilder(GetItSpringApp::class.java)
         .profiles("main")
+        .properties(
+            mapOf("springdoc.swagger-ui.path" to "")
+        )
         .run(*args)
 }
