@@ -99,8 +99,6 @@ class GetItController(@Autowired private val service: GetItService) {
         .get()
 
     @DeleteMapping("/lists/{listId}/items/{itemId}")
-    @ResponseStatus(HttpStatus.OK, reason = "item deleted")
-//    @ResponseStatus(HttpStatus.NOT_FOUND, reason = "item not found")
     fun deleteItem(
         auth: Authentication,
         @PathVariable listId: UUID,
