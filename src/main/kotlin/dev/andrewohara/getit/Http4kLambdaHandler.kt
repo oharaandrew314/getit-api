@@ -7,8 +7,11 @@ import dev.andrewohara.getit.http4k.toHttp4k
 import org.http4k.cloudnative.env.Environment
 import org.http4k.connect.amazon.dynamodb.DynamoDb
 import org.http4k.connect.amazon.dynamodb.Http
+import org.http4k.serverless.ApiGatewayV2FnLoader
 import org.http4k.serverless.ApiGatewayV2LambdaFunction
 import org.http4k.serverless.AppLoader
+import org.http4k.serverless.AwsLambdaRuntime
+import org.http4k.serverless.asServer
 
 private val loader = AppLoader { sysEnv ->
     val env = Environment.from(sysEnv)
@@ -24,3 +27,7 @@ private val loader = AppLoader { sysEnv ->
 }
 
 class Http4kLambdaHandler : ApiGatewayV2LambdaFunction(loader)
+
+fun main() {
+    ApiGatewayV2FnLoader(loader).asServer(AwsLambdaRuntime()).start()
+}

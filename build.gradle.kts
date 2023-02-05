@@ -7,6 +7,12 @@ plugins {
     id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
+kotlin {
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of(11))
+    }
+}
+
 allprojects {
     apply(plugin = "kotlin")
     apply(plugin = "kover")
@@ -48,6 +54,12 @@ allprojects {
     }
 }
 
+tasks.shadowJar {
+    manifest.attributes["Main-Class"] = "dev.andrewohara.getit.Http4kLambdaHandlerKt"
+    mergeServiceFiles()
+    minimize()
+}
+
 subprojects {
     kover {
         verify {
@@ -64,6 +76,7 @@ subprojects {
 dependencies {
     implementation(project("http4k"))
     implementation("org.http4k:http4k-serverless-lambda")
+    implementation("org.http4k:http4k-serverless-lambda-runtime")
 }
 
 koverMerged {
