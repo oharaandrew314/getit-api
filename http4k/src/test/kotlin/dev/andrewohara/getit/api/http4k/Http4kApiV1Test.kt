@@ -53,7 +53,7 @@ class Http4kApiV1Test {
     @Test
     fun `create list`() {
         val data = ShoppingListDataDtoV1(
-            name = "Stuff"
+            name = ShoppingListName.of("Stuff")
         )
         val response = Request(Method.POST, "/v1/lists")
             .withUser(driver.defaultUserId)
@@ -91,7 +91,7 @@ class Http4kApiV1Test {
     fun `update list`() {
         val list = driver.createList()
         val data = ShoppingListDataDtoV1(
-            name = "Stuff"
+            name = ShoppingListName.of("Stuff")
         )
 
         val response = Request(Method.PUT, "/v1/lists/${list.listId}")
@@ -101,7 +101,7 @@ class Http4kApiV1Test {
 
         response shouldHaveStatus Status.OK
         listV1Lens(response).should {
-            it.listId shouldBe list.listId.toString()
+            it.listId shouldBe list.listId
             it.name shouldBe data.name
         }
         driver.listsDao[driver.defaultUserId].shouldContainExactly(list.copy(name = ShoppingListName.of("Stuff")))
@@ -111,7 +111,7 @@ class Http4kApiV1Test {
     fun `add item to list`() {
         val list = driver.createList()
         val data = ShoppingItemDataDtoV1(
-            name = "iced tea",
+            name = ShoppingItemName.of("iced tea"),
             completed = false
         )
 
@@ -123,7 +123,7 @@ class Http4kApiV1Test {
         response shouldHaveStatus Status.OK
         itemV1Lens(response).should { item ->
             item.name shouldBe data.name
-            item.listId shouldBe list.listId.toString()
+            item.listId shouldBe list.listId
             driver.itemsDao[list.listId].map { it.toDtoV1() }.shouldContainExactly(item)
         }
     }
@@ -150,7 +150,7 @@ class Http4kApiV1Test {
         val item1 = driver.createItem(list)
         val item2 = driver.createItem(list)
 
-        val data = ShoppingItemDataDtoV1(name = "chips", completed = false)
+        val data = ShoppingItemDataDtoV1(name = ShoppingItemName.of("chips"), completed = false)
 
         val response = Request(Method.PUT, "/v1/lists/${list.listId}/items/${item2.itemId}")
             .withUser(list.userId)

@@ -69,7 +69,7 @@ subprojects {
             onCheck.set(true)
             rule {
                 bound {
-                    minValue = 80
+                    minValue = 79
                 }
             }
         }

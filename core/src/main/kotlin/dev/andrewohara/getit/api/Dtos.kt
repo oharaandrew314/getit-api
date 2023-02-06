@@ -2,78 +2,95 @@ package dev.andrewohara.getit.api
 
 import dev.andrewohara.getit.ShoppingItem
 import dev.andrewohara.getit.ShoppingItemData
+import dev.andrewohara.getit.ShoppingItemId
 import dev.andrewohara.getit.ShoppingItemName
 import dev.andrewohara.getit.ShoppingList
 import dev.andrewohara.getit.ShoppingListData
+import dev.andrewohara.getit.ShoppingListId
 import dev.andrewohara.getit.ShoppingListName
+import dev.andrewohara.getit.UserId
+import dev.forkhandles.values.Value
+import dev.forkhandles.values.ValueFactory
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+
+open class Values4KStringSerializer<T : Value<PRIM>, PRIM : Any>(private val factory: ValueFactory<T, PRIM>) :
+    KSerializer<T> {
+    override val descriptor = PrimitiveSerialDescriptor("Values4kStringSerializer", PrimitiveKind.STRING)
+    override fun deserialize(decoder: Decoder): T = factory.parse(decoder.decodeString())
+    override fun serialize(encoder: Encoder, value: T) = encoder.encodeString(factory.show(value))
+}
 
 @Serializable
 data class ShoppingListDtoV1(
-    val userId: String,
-    val listId: String,
-    val name: String
+    val userId: UserId,
+    val listId: ShoppingListId,
+    val name: ShoppingListName
 )
 
 @Serializable
 data class ShoppingListDataDtoV1(
-    val name: String
+    val name: ShoppingListName
 )
 
 @Serializable
 data class ShoppingItemDtoV1(
-    val listId: String,
-    val itemId: String,
-    val name: String,
+    val listId: ShoppingListId,
+    val itemId: ShoppingItemId,
+    val name: ShoppingItemName,
     val completed: Boolean
 )
 
 @Serializable
 data class ShoppingItemDataDtoV1(
-    val name: String,
+    val name: ShoppingItemName,
     val completed: Boolean
 )
 
 fun ShoppingItem.toDtoV1() = ShoppingItemDtoV1(
-    listId = listId.value.toString(),
-    itemId = itemId.value.toString(),
-    name = name.value,
+    listId = listId,
+    itemId = itemId,
+    name = name,
     completed = completed
 )
 
 fun ShoppingList.toDtoV1() = ShoppingListDtoV1(
-    userId = userId.value,
-    listId = listId.value.toString(),
-    name = name.value
+    userId = userId,
+    listId = listId,
+    name = name
 )
 
 fun ShoppingListDataDtoV1.toModel() = ShoppingListData(
-    name = ShoppingListName.of(name)
+    name = name
 )
 
 fun ShoppingItemDataDtoV1.toModel() = ShoppingItemData(
-    name = ShoppingItemName.of(name),
+    name = name,
     completed = completed
 )
 
 val sampleShoppingListDtoV1 = ShoppingListDtoV1(
-    userId = "user1",
-    listId = "b4485c15-bd74-46a1-a7bc-1cc27bf0ed58",
-    name = "Groceries"
+    userId = UserId.of("user1"),
+    listId = ShoppingListId.parse("b4485c15-bd74-46a1-a7bc-1cc27bf0ed58"),
+    name = ShoppingListName.of("Groceries")
 )
 
 val sampleShoppingListDataDtoV1 = ShoppingListDataDtoV1(
-    name = "Birthday Party"
+    name = ShoppingListName.of("Birthday Party")
 )
 
 val sampleShoppingItemDataDtoV1 = ShoppingItemDataDtoV1(
-    name = "chips",
+    name = ShoppingItemName.of("chips"),
     completed = false
 )
 
 val sampleShoppingItemDtoV1 = ShoppingItemDtoV1(
     listId = sampleShoppingListDtoV1.listId,
-    itemId = "8b3fbc45-ffc6-4d63-9b97-b2bf049b8f32",
-    name = "iced tea",
+    itemId = ShoppingItemId.parse("8b3fbc45-ffc6-4d63-9b97-b2bf049b8f32"),
+    name = ShoppingItemName.of("iced tea"),
     completed = false
 )

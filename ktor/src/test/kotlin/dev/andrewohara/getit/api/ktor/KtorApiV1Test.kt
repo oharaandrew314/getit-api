@@ -54,7 +54,7 @@ class KtorApiV1Test {
     @Test
     fun `create list`() = driver { client ->
         val data = ShoppingListDataDtoV1(
-            name = "stuff"
+            name = ShoppingListName.of("stuff")
         )
 
         val response = client.post("/v1/lists") {
@@ -91,7 +91,7 @@ class KtorApiV1Test {
     fun `update list`() = driver { client ->
         val list = driver.createList()
         val data = ShoppingListDataDtoV1(
-            name = "Stuff"
+            name = ShoppingListName.of("Stuff")
         )
 
         val response = client.put("/v1/lists/${list.listId}") {
@@ -101,7 +101,7 @@ class KtorApiV1Test {
 
         response.status shouldBe HttpStatusCode.OK
         response.body<ShoppingListDtoV1>() should { updated ->
-            updated.listId shouldBe list.listId.toString()
+            updated.listId shouldBe list.listId
             updated.name shouldBe data.name
         }
 
@@ -112,7 +112,7 @@ class KtorApiV1Test {
     fun `add item to list`() = driver { client ->
         val list = driver.createList()
         val data = ShoppingItemDataDtoV1(
-            name = "iced tea",
+            name = ShoppingItemName.of("iced tea"),
             completed = false
         )
 
@@ -124,7 +124,7 @@ class KtorApiV1Test {
         response.status shouldBe HttpStatusCode.OK
         response.body<ShoppingItemDtoV1>() should { item ->
             item.name shouldBe data.name
-            item.listId shouldBe list.listId.toString()
+            item.listId shouldBe list.listId
             driver.itemsDao[list.listId].map { it.toDtoV1() }.shouldContainExactly(item)
         }
     }
@@ -151,7 +151,7 @@ class KtorApiV1Test {
         val item1 = driver.createItem(list)
         val item2 = driver.createItem(list)
 
-        val data = ShoppingItemDataDtoV1(name = "chips", completed = false)
+        val data = ShoppingItemDataDtoV1(name = ShoppingItemName.of("chips"), completed = false)
 
         val response = client.put("v1/lists/${list.listId}/items/${item2.itemId}") {
             withUser(list.userId)

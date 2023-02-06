@@ -68,7 +68,7 @@ class GetItControllerTest(
     @Test
     fun `create list`() {
         val request = RequestEntity(
-            ShoppingListDataDtoV1("new list"),
+            ShoppingListDataDtoV1(ShoppingListName.of("new list")),
             user1.toAuthHeaders(),
             HttpMethod.POST,
             URI.create("/v1/lists")
@@ -78,8 +78,8 @@ class GetItControllerTest(
         response.statusCode shouldBe HttpStatus.OK
 
         val created = response.body.shouldNotBeNull()
-        created.name shouldBe "new list"
-        created.userId shouldBe user1.toString()
+        created.name shouldBe ShoppingListName.of("new list")
+        created.userId shouldBe user1
 
         lists[user1].map { it.toDtoV1() }.toList().shouldContainExactly(created)
     }
@@ -124,7 +124,7 @@ class GetItControllerTest(
         val list2 = user1.withList("List 2")
 
         val request = RequestEntity(
-            ShoppingListDataDtoV1("updated list"),
+            ShoppingListDataDtoV1(ShoppingListName.of("updated list")),
             user1.toAuthHeaders(),
             HttpMethod.PUT,
             URI.create("/v1/lists/${list1.listId}")
@@ -132,7 +132,7 @@ class GetItControllerTest(
 
         val response = restTemplate.exchange<ShoppingListDtoV1>(request)
         response.statusCode shouldBe HttpStatus.OK
-        response.body shouldBe list1.toDtoV1().copy(name = "updated list")
+        response.body shouldBe list1.toDtoV1().copy(name = ShoppingListName.of("updated list"))
 
         lists[user1].toList().shouldContainExactlyInAnyOrder(
             list1.copy(name = ShoppingListName.of("updated list")),
@@ -146,7 +146,7 @@ class GetItControllerTest(
         val item1 = list1.withItem("bacon")
 
         val request = RequestEntity(
-            ShoppingItemDataDtoV1("eggs", false),
+            ShoppingItemDataDtoV1(ShoppingItemName.of("eggs"), false),
             user1.toAuthHeaders(),
             HttpMethod.POST,
             URI.create("/v1/lists/${list1.listId}/items")
@@ -156,8 +156,8 @@ class GetItControllerTest(
         response.statusCode shouldBe HttpStatus.OK
 
         val created = response.body.shouldNotBeNull()
-        created.listId shouldBe list1.listId.toString()
-        created.name shouldBe "eggs"
+        created.listId shouldBe list1.listId
+        created.name shouldBe ShoppingItemName.of("eggs")
         created.completed shouldBe false
 
         items[list1.listId]
@@ -193,7 +193,7 @@ class GetItControllerTest(
         val item2 = list1.withItem("eggs")
 
         val request = RequestEntity(
-            ShoppingItemDataDtoV1(name = "bacon", completed = true),
+            ShoppingItemDataDtoV1(name = ShoppingItemName.of("bacon"), completed = true),
             user1.toAuthHeaders(),
             HttpMethod.PUT,
             URI.create("/v1/lists/${list1.listId}/items/${item1.itemId}")
