@@ -1,6 +1,5 @@
 package dev.andrewohara.getit.http4k
 
-import dev.andrewohara.getit.GetItMoshi
 import dev.andrewohara.getit.GetItService
 import dev.andrewohara.getit.UserId
 import dev.andrewohara.getit.api.Authorizer
@@ -23,6 +22,7 @@ import org.http4k.filter.CorsPolicy
 import org.http4k.filter.OriginPolicy
 import org.http4k.filter.ResponseFilters
 import org.http4k.filter.ServerFilters
+import org.http4k.format.KotlinxSerialization
 import org.http4k.lens.RequestContextKey
 import org.http4k.routing.routes
 
@@ -43,8 +43,8 @@ fun GetItService.toHttp4k(corsOrigins: List<String>?, authorizer: Authorizer): H
     val apiV1 = contract {
         renderer = OpenApi3(
             apiInfo = ApiInfo("GetIt Api", "1"),
-            json = GetItMoshi,
-            apiRenderer = OpenApi3ApiRenderer(GetItMoshi)
+            json = KotlinxSerialization,
+            apiRenderer = OpenApi3ApiRenderer(KotlinxSerialization)
         )
         descriptionPath = "/openapi"
         routes += toV1Routes(authLens)

@@ -6,17 +6,21 @@ import dev.andrewohara.getit.ShoppingItemName
 import dev.andrewohara.getit.ShoppingList
 import dev.andrewohara.getit.ShoppingListData
 import dev.andrewohara.getit.ShoppingListName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class ShoppingListDtoV1(
     val userId: String,
     val listId: String,
     val name: String
 )
 
+@Serializable
 data class ShoppingListDataDtoV1(
     val name: String
 )
 
+@Serializable
 data class ShoppingItemDtoV1(
     val listId: String,
     val itemId: String,
@@ -24,6 +28,7 @@ data class ShoppingItemDtoV1(
     val completed: Boolean
 )
 
+@Serializable
 data class ShoppingItemDataDtoV1(
     val name: String,
     val completed: Boolean

@@ -1,10 +1,10 @@
 package dev.andrewohara.getit.dao
 
-import dev.andrewohara.getit.GetItMoshi
 import dev.andrewohara.getit.ShoppingList
 import dev.andrewohara.getit.ShoppingListId
 import dev.andrewohara.getit.ShoppingListName
 import dev.andrewohara.getit.UserId
+import kotlinx.serialization.Serializable
 import org.http4k.connect.amazon.dynamodb.DynamoDb
 import org.http4k.connect.amazon.dynamodb.mapper.DynamoDbTableMapper
 import org.http4k.connect.amazon.dynamodb.mapper.minusAssign
@@ -12,6 +12,7 @@ import org.http4k.connect.amazon.dynamodb.mapper.plusAssign
 import org.http4k.connect.amazon.dynamodb.mapper.tableMapper
 import org.http4k.connect.amazon.dynamodb.model.Attribute
 import org.http4k.connect.amazon.dynamodb.model.TableName
+import org.http4k.format.KotlinxSerialization
 import java.util.UUID
 
 class DynamoListsDao private constructor(
@@ -23,7 +24,7 @@ class DynamoListsDao private constructor(
                 tableName,
                 hashKeyAttribute = Attribute.string().required("userId"),
                 sortKeyAttribute = Attribute.uuid().required("listId"),
-                autoMarshalling = GetItMoshi
+                autoMarshalling = KotlinxSerialization
             )
                 .also { if (create) it.createTable() }
                 .let { DynamoListsDao(it) }
@@ -37,7 +38,8 @@ class DynamoListsDao private constructor(
     operator fun minusAssign(list: ShoppingList) = table.minusAssign(list.toDynamo())
 }
 
-private data class DynamoShoppingList(
+@Serializable
+data class DynamoShoppingList(
     val userId: String,
     val name: String,
     val listId: String

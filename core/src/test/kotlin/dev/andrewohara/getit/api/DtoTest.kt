@@ -1,12 +1,12 @@
 package dev.andrewohara.getit.api
 
-import dev.andrewohara.getit.GetItMoshi
 import io.kotest.matchers.shouldBe
+import org.http4k.format.KotlinxSerialization
 import org.junit.jupiter.api.Test
 
 class DtoTest {
 
-    private val marshaller = GetItMoshi
+    private val marshaller = KotlinxSerialization
 
     @Test
     fun `serialize list`() {

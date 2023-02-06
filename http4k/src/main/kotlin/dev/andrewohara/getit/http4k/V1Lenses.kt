@@ -7,7 +7,7 @@ import dev.andrewohara.getit.api.ShoppingItemDtoV1
 import dev.andrewohara.getit.api.ShoppingListDataDtoV1
 import dev.andrewohara.getit.api.ShoppingListDtoV1
 import org.http4k.core.Body
-import org.http4k.format.Moshi.auto
+import org.http4k.format.KotlinxSerialization.auto
 import org.http4k.lens.Path
 import org.http4k.lens.value
 

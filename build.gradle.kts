@@ -2,6 +2,7 @@ import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 
 plugins {
     kotlin("jvm") version "1.8.0"
+    kotlin("plugin.serialization") version "1.8.0"
     id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
     id("org.jetbrains.kotlinx.kover") version "0.6.1"
     id("com.github.johnrengelman.shadow") version "7.1.2"
@@ -25,7 +26,7 @@ allprojects {
 
     dependencies {
         implementation(platform("io.ktor:ktor-bom:2.2.1"))
-        implementation(platform("org.http4k:http4k-bom:4.37.0.0"))
+        implementation(platform("org.http4k:http4k-bom:4.38.0.0"))
         implementation(platform("org.http4k:http4k-connect-bom:3.27.1.0"))
         implementation(platform("dev.forkhandles:forkhandles-bom:2.3.0.0"))
 
@@ -57,7 +58,9 @@ allprojects {
 tasks.shadowJar {
     manifest.attributes["Main-Class"] = "dev.andrewohara.getit.Http4kLambdaHandlerKt"
     mergeServiceFiles()
-    minimize()
+    minimize {
+        exclude(dependency("org.slf4j:.*:.*"))
+    }
 }
 
 subprojects {

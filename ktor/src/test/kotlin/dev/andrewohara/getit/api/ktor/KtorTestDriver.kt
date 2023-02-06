@@ -9,7 +9,7 @@ import dev.andrewohara.getit.UserId
 import dev.andrewohara.getit.dao.DynamoItemsDao.Companion.itemsDao
 import dev.andrewohara.getit.dao.DynamoListsDao.Companion.listsDao
 import io.ktor.client.HttpClient
-import io.ktor.serialization.jackson.jackson
+import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.testing.testApplication
 import org.http4k.connect.amazon.dynamodb.FakeDynamoDb
 import org.http4k.connect.amazon.dynamodb.model.TableName
@@ -61,7 +61,7 @@ class KtorTestDriver {
 
         val client = createClient {
             install(ClientContentNegotiation) {
-                jackson()
+                json()
             }
         }
         testFn(client)

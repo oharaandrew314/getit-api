@@ -177,4 +177,11 @@ class Http4kApiV1Test {
 
         driver.itemsDao[list.listId].toList().shouldContainExactlyInAnyOrder(item1)
     }
+
+    @Test
+    fun `render openapi spec`() {
+        Request(Method.GET, "/openapi")
+            .let(driver)
+            .shouldHaveStatus(Status.OK)
+    }
 }

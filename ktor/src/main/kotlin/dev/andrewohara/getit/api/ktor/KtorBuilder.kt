@@ -3,7 +3,7 @@ package dev.andrewohara.getit.api.ktor
 import dev.andrewohara.getit.GetItService
 import dev.andrewohara.getit.UserId
 import dev.andrewohara.getit.api.Authorizer
-import io.ktor.serialization.jackson.jackson
+import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.auth.Authentication
@@ -27,7 +27,7 @@ private fun Application.createAuthorization(authorizer: Authorizer) {
 fun Application.installGetIt(service: GetItService) {
     install(Resources)
     install(ContentNegotiation) {
-        jackson()
+        json()
     }
     createAuthorization { UserId.of(it) }
     createRoutes(service)

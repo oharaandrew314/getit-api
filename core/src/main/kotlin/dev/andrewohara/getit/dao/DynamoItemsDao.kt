@@ -1,10 +1,10 @@
 package dev.andrewohara.getit.dao
 
-import dev.andrewohara.getit.GetItMoshi
 import dev.andrewohara.getit.ShoppingItem
 import dev.andrewohara.getit.ShoppingItemId
 import dev.andrewohara.getit.ShoppingItemName
 import dev.andrewohara.getit.ShoppingListId
+import kotlinx.serialization.Serializable
 import org.http4k.connect.amazon.dynamodb.DynamoDb
 import org.http4k.connect.amazon.dynamodb.mapper.DynamoDbTableMapper
 import org.http4k.connect.amazon.dynamodb.mapper.minusAssign
@@ -12,6 +12,7 @@ import org.http4k.connect.amazon.dynamodb.mapper.plusAssign
 import org.http4k.connect.amazon.dynamodb.mapper.tableMapper
 import org.http4k.connect.amazon.dynamodb.model.Attribute
 import org.http4k.connect.amazon.dynamodb.model.TableName
+import org.http4k.format.KotlinxSerialization
 import java.util.UUID
 
 class DynamoItemsDao private constructor(
@@ -23,7 +24,7 @@ class DynamoItemsDao private constructor(
                 tableName,
                 hashKeyAttribute = Attribute.uuid().required("listId"),
                 sortKeyAttribute = Attribute.uuid().required("itemId"),
-                autoMarshalling = GetItMoshi
+                autoMarshalling = KotlinxSerialization
             )
                 .also { if (create) it.createTable() }
                 .let { DynamoItemsDao(it) }
@@ -37,23 +38,24 @@ class DynamoItemsDao private constructor(
     operator fun get(listId: ShoppingListId, itemId: ShoppingItemId) = table[listId.value, itemId.value]?.toModel()
 }
 
-private data class DynamoShoppingItem(
-    val listId: UUID,
+@Serializable
+data class DynamoShoppingItem(
+    val listId: String,
     val name: String,
-    val itemId: UUID,
+    val itemId: String,
     val completed: Boolean
 )
 
 private fun DynamoShoppingItem.toModel() = ShoppingItem(
-    listId = ShoppingListId.of(listId),
-    itemId = ShoppingItemId.of(itemId),
+    listId = ShoppingListId.parse(listId),
+    itemId = ShoppingItemId.parse(itemId),
     name = ShoppingItemName.of(name),
     completed = completed
 )
 
 private fun ShoppingItem.toDynamo() = DynamoShoppingItem(
-    listId = listId.value,
-    itemId = itemId.value,
+    listId = listId.toString(),
+    itemId = itemId.toString(),
     name = name.value,
     completed = completed
 )
