@@ -38,8 +38,8 @@ private val loader = AppLoader { sysEnv ->
 class Http4kLambdaHandler : ApiGatewayV2LambdaFunction(loader)
 
 fun main() {
-    println("ApiGatewayV2FnLoader: start")
+    println("AwsLambdaRuntime: start")
     val server = ApiGatewayV2FnLoader(loader).asServer(AwsLambdaRuntime())
-    println("fApiGatewayV2FnLoader: complete")
+    println("AwsLambdaRuntime: complete")
     server.start()
 }
