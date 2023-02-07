@@ -32,7 +32,7 @@ allprojects {
 
         implementation(kotlin("stdlib-jdk8"))
         implementation("org.slf4j:slf4j-simple:2.0.6")
-        implementation("com.github.oharaandrew314:service-utils:0.9.0")
+        implementation("com.github.oharaandrew314:service-utils:1.0.0")
 
         testImplementation("io.kotest:kotest-assertions-core-jvm:5.5.4")
         testImplementation("org.http4k:http4k-connect-amazon-dynamodb-fake")

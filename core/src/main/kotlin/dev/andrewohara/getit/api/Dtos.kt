@@ -9,21 +9,7 @@ import dev.andrewohara.getit.ShoppingListData
 import dev.andrewohara.getit.ShoppingListId
 import dev.andrewohara.getit.ShoppingListName
 import dev.andrewohara.getit.UserId
-import dev.forkhandles.values.Value
-import dev.forkhandles.values.ValueFactory
-import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
-
-open class Values4KStringSerializer<T : Value<PRIM>, PRIM : Any>(private val factory: ValueFactory<T, PRIM>) :
-    KSerializer<T> {
-    override val descriptor = PrimitiveSerialDescriptor("Values4kStringSerializer", PrimitiveKind.STRING)
-    override fun deserialize(decoder: Decoder): T = factory.parse(decoder.decodeString())
-    override fun serialize(encoder: Encoder, value: T) = encoder.encodeString(factory.show(value))
-}
 
 @Serializable
 data class ShoppingListDtoV1(

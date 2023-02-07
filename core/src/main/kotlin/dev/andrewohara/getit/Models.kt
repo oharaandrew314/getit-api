@@ -1,20 +1,21 @@
 package dev.andrewohara.getit
 
-import dev.andrewohara.getit.api.Values4KStringSerializer
 import dev.forkhandles.values.NonEmptyStringValueFactory
 import dev.forkhandles.values.StringValue
 import dev.forkhandles.values.StringValueFactory
 import dev.forkhandles.values.UUIDValue
 import dev.forkhandles.values.UUIDValueFactory
 import dev.forkhandles.values.random
+import io.andrewohara.utils.kotlinx.serialization.values4kSerializer
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import java.util.UUID
 
-object UserIdSerializer : Values4KStringSerializer<UserId, String>(UserId)
-object ShoppingListIdSerializer : Values4KStringSerializer<ShoppingListId, UUID>(ShoppingListId)
-object ShoppingItemIdSerializer : Values4KStringSerializer<ShoppingItemId, UUID>(ShoppingItemId)
-object ShoppingListNameSerializer : Values4KStringSerializer<ShoppingListName, String>(ShoppingListName)
-object ShoppingItemNameSerializer : Values4KStringSerializer<ShoppingItemName, String>(ShoppingItemName)
+object UserIdSerializer : KSerializer<UserId> by values4kSerializer(UserId)
+object ShoppingListIdSerializer : KSerializer<ShoppingListId> by values4kSerializer(ShoppingListId)
+object ShoppingItemIdSerializer : KSerializer<ShoppingItemId> by values4kSerializer(ShoppingItemId)
+object ShoppingListNameSerializer : KSerializer<ShoppingListName> by values4kSerializer(ShoppingListName)
+object ShoppingItemNameSerializer : KSerializer<ShoppingItemName> by values4kSerializer(ShoppingItemName)
 
 @Serializable(with = UserIdSerializer::class)
 class UserId private constructor(value: String) : StringValue(value) {
