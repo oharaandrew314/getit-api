@@ -26,7 +26,7 @@ allprojects {
 
     dependencies {
         implementation(platform("io.ktor:ktor-bom:2.2.1"))
-        implementation(platform("org.http4k:http4k-bom:4.38.0.0"))
+        implementation(platform("org.http4k:http4k-bom:4.38.0.1"))
         implementation(platform("org.http4k:http4k-connect-bom:3.27.1.0"))
         implementation(platform("dev.forkhandles:forkhandles-bom:2.3.0.0"))
 
@@ -57,7 +57,6 @@ allprojects {
 
 tasks.shadowJar {
     manifest.attributes["Main-Class"] = "dev.andrewohara.getit.Http4kLambdaHandlerKt"
-    mergeServiceFiles()
     minimize {
         exclude(dependency("org.slf4j:.*:.*"))
     }
