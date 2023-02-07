@@ -27,4 +27,4 @@ jobs:
       - name: Deploy
         run: |
           sam build
-          sam deploy --region ${{ vars.AWS_REGION }} --stack-name ${{ vars.STACK_NAME }} --s3-bucket ${{ vars.S3_BUCKET} --s3-prefix ${{ vars.STACK_NAME }} --capabilities CAPABILITY_IAM
+          sam deploy --region ${{ vars.AWS_REGION }} --stack-name ${{ vars.STACK_NAME }} --s3-bucket ${{ vars.S3_BUCKET }} --s3-prefix ${{ vars.STACK_NAME }} --capabilities CAPABILITY_IAM
