@@ -19,7 +19,7 @@ class TestConfig {
 
     @Bean
     @Primary
-    fun faeAuthorizer() = Authorizer { UserId.of(it) }
+    fun fakeAuthorizer() = Authorizer { UserId.of(it) }
 
     @Bean
     @Primary

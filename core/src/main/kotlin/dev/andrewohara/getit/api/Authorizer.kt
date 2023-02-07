@@ -24,7 +24,9 @@ fun interface GetVerifier {
 }
 
 fun GetVerifier.Companion.rsaJwks(url: URL): GetVerifier {
-    val set = JWKSet.load(url)
+    val set by lazy {
+        JWKSet.load(url)
+    }
     return GetVerifier { keyId ->
         keyId
             ?.let { set.getKeyByKeyId(keyId) }
