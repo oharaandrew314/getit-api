@@ -8,6 +8,7 @@ Parameters:
 
 Globals:
   Function:
+#    Runtime: provided.al2
     Runtime: java11
     MemorySize: 2048
     Environment:
@@ -34,7 +35,6 @@ Resources:
     Type: 'AWS::Serverless::Function'
     Properties:
       Timeout: 10
-#      PackageType: Zip
 #      CodeUri: build/distributions/getit-api-all.zip
       Handler: dev.andrewohara.getit.Http4kLambdaHandler
       Architectures: [arm64]
