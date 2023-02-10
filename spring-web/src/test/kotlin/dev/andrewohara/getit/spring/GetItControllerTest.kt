@@ -26,22 +26,20 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.RequestEntity
-import org.springframework.test.annotation.DirtiesContext
-import org.springframework.test.annotation.DirtiesContext.ClassMode
 import org.springframework.test.context.ActiveProfiles
 import java.net.URI
+import java.util.UUID
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 class GetItControllerTest(
     @Autowired val restTemplate: TestRestTemplate,
     @Autowired val items: DynamoItemsDao,
     @Autowired val lists: DynamoListsDao
 ) {
 
-    private val user1 = UserId.of("user1")
-    private val user2 = UserId.of("user2")
+    private val user1 = UserId.of(UUID.randomUUID().toString())
+    private val user2 = UserId.of(UUID.randomUUID().toString())
 
     @Test
     fun `get lists - unauthorized`() {
