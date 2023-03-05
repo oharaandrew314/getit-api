@@ -7,9 +7,9 @@ import (
 )
 
 type Item struct {
-	userId string
-	listId uuid.UUID
-	name   string
+	UserId string `json:"userId"`
+	ListId string `json:"listId"`
+	Name   string `json:"name"`
 }
 
 type Data struct {
@@ -23,8 +23,8 @@ func (data Data) ToList(userId string) Item {
 	}
 
 	return Item{
-		userId: userId,
-		listId: listId,
-		name:   data.Name,
+		UserId: userId,
+		ListId: listId.String(),
+		Name:   data.Name,
 	}
 }
