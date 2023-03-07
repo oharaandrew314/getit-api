@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log"
+	"net/url"
 	"os"
 
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -28,6 +29,18 @@ func initService() service.GetItService {
 func main() {
 	service := initService()
 
-	r := api.Create(service)
+	issuerUrl, err := url.Parse("https://accounts.google.com")
+	if err != nil {
+		log.Fatalf("Unable to parse issuer url, %v", err)
+	}
+
+	jwtAudience := os.Getenv("jwt_audience")
+
+	validator, err := api.CreateJwtValidator(issuerUrl, "accounts.google.com", jwtAudience)
+	if err != nil {
+		log.Fatalf("Unable to create JWT validator, %v", err)
+	}
+
+	r := api.Create(service, validator)
 	r.Run() // listen and serve on 0.0.0.0:8080
 }
