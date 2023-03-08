@@ -13,7 +13,7 @@ type List struct {
 }
 
 type Data struct {
-	Name string
+	Name string `json:"name"`
 }
 
 func (data Data) ToList(userId string) List {

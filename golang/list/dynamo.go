@@ -8,7 +8,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
-	"github.com/google/uuid"
 )
 
 type dynamoListTable struct {
@@ -46,7 +45,7 @@ func (table dynamoListTable) GetListsForUser(userId string) ([]List, error) {
 	return shoppingLists, err
 }
 
-func (table dynamoListTable) GetList(userId string, listId uuid.UUID) (List, error) {
+func (table dynamoListTable) GetList(userId string, listId string) (*List, error) {
 	response, err := table.client.GetItem(context.TODO(), &dynamodb.GetItemInput{
 		Key:       createKey(userId, listId),
 		TableName: aws.String(table.name),
@@ -58,10 +57,10 @@ func (table dynamoListTable) GetList(userId string, listId uuid.UUID) (List, err
 	var list List
 	err = attributevalue.UnmarshalMap(response.Item, &list)
 
-	return list, err
+	return &list, err
 }
 
-func (table dynamoListTable) Save(list List) error {
+func (table dynamoListTable) Save(list *List) error {
 	item, err := attributevalue.MarshalMap(list)
 	if err != nil {
 		panic(err)
@@ -73,7 +72,7 @@ func (table dynamoListTable) Save(list List) error {
 	return err
 }
 
-func (table dynamoListTable) Delete(userId string, listId uuid.UUID) error {
+func (table dynamoListTable) Delete(userId string, listId string) error {
 	_, err := table.client.DeleteItem(context.TODO(), &dynamodb.DeleteItemInput{
 		TableName: aws.String(table.name),
 		Key:       createKey(userId, listId),
@@ -81,8 +80,8 @@ func (table dynamoListTable) Delete(userId string, listId uuid.UUID) error {
 	return err
 }
 
-func createKey(userId string, listId uuid.UUID) map[string]types.AttributeValue {
-	listIdValue, err := attributevalue.Marshal(listId.String())
+func createKey(userId string, listId string) map[string]types.AttributeValue {
+	listIdValue, err := attributevalue.Marshal(listId)
 	if err != nil {
 		panic(err)
 	}

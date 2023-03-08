@@ -1,9 +1,5 @@
 package list
 
-import (
-	"github.com/google/uuid"
-)
-
 type memoryListTable struct {
 	items []List
 }
@@ -20,24 +16,24 @@ func (data *memoryListTable) GetListsForUser(userId string) ([]List, error) {
 	return filtered, nil
 }
 
-func (data *memoryListTable) GetList(userId string, listId uuid.UUID) (List, error) {
+func (data *memoryListTable) GetList(userId string, listId string) (*List, error) {
 	for _, item := range data.items {
-		if item.UserId == userId && item.ListId == listId.String() {
-			return item, nil
+		if item.UserId == userId && item.ListId == listId {
+			return &item, nil
 		}
 	}
 
-	return List{}, nil
+	return nil, nil
 }
 
-func (data *memoryListTable) Save(list List) error {
-	data.items = append(data.items, list)
+func (data *memoryListTable) Save(list *List) error {
+	data.items = append(data.items, *list)
 	return nil
 }
 
-func (data *memoryListTable) Delete(userId string, listId uuid.UUID) error {
+func (data *memoryListTable) Delete(userId string, listId string) error {
 	for i, item := range data.items {
-		if item.UserId == userId && item.ListId == listId.String() {
+		if item.UserId == userId && item.ListId == listId {
 			data.items = append(data.items[:i], data.items[i+1:]...)
 		}
 	}
