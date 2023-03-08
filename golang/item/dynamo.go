@@ -1,4 +1,4 @@
-package list
+package item
 
 import (
 	"context"
@@ -10,20 +10,20 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 )
 
-type dynamoListTable struct {
+type dynamoItemTable struct {
 	client *dynamodb.Client
 	name   string
 }
 
 func NewDynamo(DynamoDbClient *dynamodb.Client, TableName string) Dao {
-	return &dynamoListTable{
+	return &dynamoItemTable{
 		client: DynamoDbClient,
 		name:   TableName,
 	}
 }
 
-func (table *dynamoListTable) GetListsForUser(userId string) ([]List, error) {
-	keyEx := expression.Key("userId").Equal(expression.Value(userId))
+func (table *dynamoItemTable) ForList(listId string) ([]Item, error) {
+	keyEx := expression.Key("listId").Equal(expression.Value(listId))
 	expr, err := expression.NewBuilder().WithKeyCondition(keyEx).Build()
 	if err != nil {
 		return nil, err
@@ -39,60 +39,58 @@ func (table *dynamoListTable) GetListsForUser(userId string) ([]List, error) {
 		return nil, err
 	}
 
-	var shoppingLists []List
-	err = attributevalue.UnmarshalListOfMaps(response.Items, &shoppingLists)
-
-	return shoppingLists, err
+	var items []Item
+	err = attributevalue.UnmarshalListOfMaps(response.Items, &items)
+	return items, err
 }
 
-func (table *dynamoListTable) GetList(userId string, listId string) (*List, error) {
+func (table *dynamoItemTable) Get(listId string, itemId string) (*Item, error) {
 	response, err := table.client.GetItem(context.TODO(), &dynamodb.GetItemInput{
-		Key:       createKey(userId, listId),
+		Key:       createKey(listId, itemId),
 		TableName: aws.String(table.name),
 	})
 	if err != nil {
 		panic(err)
 	}
 
-	var list List
-	err = attributevalue.UnmarshalMap(response.Item, &list)
-
-	return &list, err
+	var item Item
+	err = attributevalue.UnmarshalMap(response.Item, &item)
+	return &item, err
 }
 
-func (table *dynamoListTable) Save(list *List) error {
-	item, err := attributevalue.MarshalMap(list)
+func (table *dynamoItemTable) Save(item *Item) error {
+	dynamoItem, err := attributevalue.MarshalMap(item)
 	if err != nil {
 		panic(err)
 	}
 	_, err = table.client.PutItem(context.TODO(), &dynamodb.PutItemInput{
 		TableName: aws.String(table.name),
-		Item:      item,
+		Item:      dynamoItem,
 	})
 	return err
 }
 
-func (table *dynamoListTable) Delete(userId string, listId string) error {
+func (table *dynamoItemTable) Delete(listId string, itemId string) error {
 	_, err := table.client.DeleteItem(context.TODO(), &dynamodb.DeleteItemInput{
 		TableName: aws.String(table.name),
-		Key:       createKey(userId, listId),
+		Key:       createKey(listId, itemId),
 	})
 	return err
 }
 
-func createKey(userId string, listId string) map[string]types.AttributeValue {
+func createKey(listId string, itemId string) map[string]types.AttributeValue {
 	listIdValue, err := attributevalue.Marshal(listId)
 	if err != nil {
 		panic(err)
 	}
 
-	userIdValue, err := attributevalue.Marshal(userId)
+	itemIdValue, err := attributevalue.Marshal(itemId)
 	if err != nil {
 		panic(err)
 	}
 
 	return map[string]types.AttributeValue{
-		"userId": userIdValue,
 		"listId": listIdValue,
+		"itemId": itemIdValue,
 	}
 }

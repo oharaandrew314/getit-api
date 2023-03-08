@@ -1,13 +1,13 @@
 package list
 
 type memoryListTable struct {
-	items []List
+	lists map[string]List
 }
 
 func (data *memoryListTable) GetListsForUser(userId string) ([]List, error) {
 	filtered := []List{}
 
-	for _, item := range data.items {
+	for _, item := range data.lists {
 		if item.UserId == userId {
 			filtered = append(filtered, item)
 		}
@@ -17,32 +17,32 @@ func (data *memoryListTable) GetListsForUser(userId string) ([]List, error) {
 }
 
 func (data *memoryListTable) GetList(userId string, listId string) (*List, error) {
-	for _, item := range data.items {
-		if item.UserId == userId && item.ListId == listId {
-			return &item, nil
-		}
+	list, found := data.lists[listId]
+	if !found || list.UserId != userId {
+		return nil, nil
 	}
 
-	return nil, nil
+	return &list, nil
 }
 
 func (data *memoryListTable) Save(list *List) error {
-	data.items = append(data.items, *list)
+	data.lists[list.ListId] = *list
 	return nil
 }
 
 func (data *memoryListTable) Delete(userId string, listId string) error {
-	for i, item := range data.items {
-		if item.UserId == userId && item.ListId == listId {
-			data.items = append(data.items[:i], data.items[i+1:]...)
-		}
+	list, found := data.lists[listId]
+	if !found || list.UserId != userId {
+		return nil
 	}
+
+	delete(data.lists, listId)
 
 	return nil
 }
 
 func Memory() Dao {
 	return &memoryListTable{
-		items: []List{},
+		lists: map[string]List{},
 	}
 }

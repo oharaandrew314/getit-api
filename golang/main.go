@@ -12,6 +12,7 @@ import (
 	adapter "github.com/gwatts/gin-adapter"
 
 	"getit-api/api"
+	"getit-api/item"
 	"getit-api/list"
 	"getit-api/service"
 )
@@ -24,7 +25,8 @@ func initService() service.GetItService {
 	client := dynamodb.NewFromConfig(cfg)
 
 	return service.NewGetItService(
-		list.CreateDao(client, os.Getenv("lists_table_name")),
+		list.NewDynamo(client, os.Getenv("lists_table_name")),
+		item.NewDynamo(client, os.Getenv("items_table_name")),
 	)
 }
 
