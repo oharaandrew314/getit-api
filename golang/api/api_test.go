@@ -167,6 +167,35 @@ func TestList_Delete_Deleted(t *testing.T) {
 	assert.Equal(t, []list.List{*list2}, retrieved)
 }
 
+func TestItem_ForList_ListNotFound(t *testing.T) {
+	app := newTestApp()
+
+	req, _ := http.NewRequest("GET", "/v1/lists/foo/items", nil)
+	resp := app.execute(req, user1)
+
+	// verify status code
+	assert.Equal(t, 404, resp.Code)
+}
+
+func TestItem_ForList_Success(t *testing.T) {
+	app := newTestApp()
+	list1 := app.newList(user1, "list1")
+	item1 := app.newItem(list1, "item1", false)
+	item2 := app.newItem(list1, "item2", true)
+
+	req, _ := http.NewRequest("GET", "/v1/lists/"+list1.ListId+"/items", nil)
+	resp := app.execute(req, user1)
+
+	// verify status code
+	assert.Equal(t, 200, resp.Code)
+
+	// verify response body
+	var actual []item.Item
+	err := json.Unmarshal(resp.Body.Bytes(), &actual)
+	assert.Nil(t, err)
+	assert.Equal(t, []item.Item{*item1, *item2}, actual)
+}
+
 func TestItem_Create_ListNotFound(t *testing.T) {
 	app := newTestApp()
 

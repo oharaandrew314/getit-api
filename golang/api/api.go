@@ -17,9 +17,11 @@ func getUserId(c *gin.Context) string {
 	return claims.RegisteredClaims.Subject
 }
 
-func Create(service service.GetItService) *gin.Engine {
+func Create(service service.GetItService, middlewares ...gin.HandlerFunc) *gin.Engine {
 	r := gin.Default()
+	r.Use(middlewares...)
 
+	// Get Lists
 	r.GET("/v1/lists", func(c *gin.Context) {
 		userId := getUserId(c)
 
@@ -31,6 +33,7 @@ func Create(service service.GetItService) *gin.Engine {
 		c.JSON(http.StatusOK, lists)
 	})
 
+	// Create List
 	r.POST("/v1/lists", func(c *gin.Context) {
 		userId := getUserId(c)
 
@@ -48,6 +51,7 @@ func Create(service service.GetItService) *gin.Engine {
 		c.JSON(http.StatusOK, list)
 	})
 
+	// Delete List
 	r.DELETE("/v1/lists/:listId", func(c *gin.Context) {
 		userId := getUserId(c)
 		listId := c.Param("listId")
@@ -64,6 +68,23 @@ func Create(service service.GetItService) *gin.Engine {
 		}
 	})
 
+	// Get Items for List
+	r.GET("/v1/lists/:listId/items", func(c *gin.Context) {
+		userId := getUserId(c)
+		listId := c.Param("listId")
+
+		items, err := service.ItemsForList(userId, listId)
+		switch {
+		case err != nil:
+			c.AbortWithError(http.StatusInternalServerError, err)
+		case items == nil:
+			c.Status(http.StatusNotFound)
+		default:
+			c.JSON(http.StatusOK, items)
+		}
+	})
+
+	// Add Item to List
 	r.POST("/v1/lists/:listId/items", func(c *gin.Context) {
 		userId := getUserId(c)
 		listId := c.Param("listId")
@@ -86,6 +107,7 @@ func Create(service service.GetItService) *gin.Engine {
 		}
 	})
 
+	// Update Item on List
 	r.PUT("/v1/lists/:listId/items/:itemId", func(c *gin.Context) {
 		userId := getUserId(c)
 		listId := c.Param("listId")
@@ -109,6 +131,7 @@ func Create(service service.GetItService) *gin.Engine {
 		}
 	})
 
+	// Delete Item from List
 	r.DELETE("/v1/lists/:listId/items/:itemId", func(c *gin.Context) {
 		userId := getUserId(c)
 		listId := c.Param("listId")

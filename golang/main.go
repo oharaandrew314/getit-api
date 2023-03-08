@@ -51,7 +51,6 @@ func main() {
 	service := initService()
 	jwt := initJwt()
 
-	r := api.Create(service)
-	r.Use(adapter.Wrap(jwt.CheckJWT))
+	r := api.Create(service, adapter.Wrap(jwt.CheckJWT))
 	r.Run() // listen and serve on 0.0.0.0:8080
 }
