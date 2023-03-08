@@ -6,8 +6,10 @@ import (
 	"net/url"
 	"os"
 
+	jwtmiddleware "github.com/auth0/go-jwt-middleware/v2"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
+	adapter "github.com/gwatts/gin-adapter"
 
 	"getit-api/api"
 	"getit-api/list"
@@ -26,21 +28,28 @@ func initService() service.GetItService {
 	)
 }
 
-func main() {
-	service := initService()
-
-	issuerUrl, err := url.Parse("https://accounts.google.com")
+func initJwt() *jwtmiddleware.JWTMiddleware {
+	oidcUrl, err := url.Parse("https://accounts.google.com")
 	if err != nil {
 		log.Fatalf("Unable to parse issuer url, %v", err)
 	}
 
 	jwtAudience := os.Getenv("jwt_audience")
+	jwtIssuer := "accounts.google.com"
 
-	validator, err := api.CreateJwtValidator(issuerUrl, "accounts.google.com", jwtAudience)
+	jwt, err := api.CreateJwtValidator(oidcUrl, jwtIssuer, jwtAudience)
 	if err != nil {
 		log.Fatalf("Unable to create JWT validator, %v", err)
 	}
 
-	r := api.Create(service, validator)
+	return jwtmiddleware.New(jwt.ValidateToken)
+}
+
+func main() {
+	service := initService()
+	jwt := initJwt()
+
+	r := api.Create(service)
+	r.Use(adapter.Wrap(jwt.CheckJWT))
 	r.Run() // listen and serve on 0.0.0.0:8080
 }

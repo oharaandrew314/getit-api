@@ -11,26 +11,19 @@ import (
 	"github.com/google/uuid"
 )
 
-type table struct {
+type dynamoListTable struct {
 	client *dynamodb.Client
 	name   string
 }
 
-type Dao interface {
-	GetListsForUser(userId string) ([]Item, error)
-	GetList(userId string, listId uuid.UUID) (Item, error)
-	Save(list Item) error
-	Delete(userId string, listId uuid.UUID) error
-}
-
 func CreateDao(DynamoDbClient *dynamodb.Client, TableName string) Dao {
-	return &table{
+	return &dynamoListTable{
 		client: DynamoDbClient,
 		name:   TableName,
 	}
 }
 
-func (table table) GetListsForUser(userId string) ([]Item, error) {
+func (table dynamoListTable) GetListsForUser(userId string) ([]List, error) {
 	keyEx := expression.Key("userId").Equal(expression.Value(userId))
 	expr, err := expression.NewBuilder().WithKeyCondition(keyEx).Build()
 	if err != nil {
@@ -47,13 +40,13 @@ func (table table) GetListsForUser(userId string) ([]Item, error) {
 		return nil, err
 	}
 
-	var shoppingLists []Item
+	var shoppingLists []List
 	err = attributevalue.UnmarshalListOfMaps(response.Items, &shoppingLists)
 
 	return shoppingLists, err
 }
 
-func (table table) GetList(userId string, listId uuid.UUID) (Item, error) {
+func (table dynamoListTable) GetList(userId string, listId uuid.UUID) (List, error) {
 	response, err := table.client.GetItem(context.TODO(), &dynamodb.GetItemInput{
 		Key:       createKey(userId, listId),
 		TableName: aws.String(table.name),
@@ -62,13 +55,13 @@ func (table table) GetList(userId string, listId uuid.UUID) (Item, error) {
 		panic(err)
 	}
 
-	var list Item
+	var list List
 	err = attributevalue.UnmarshalMap(response.Item, &list)
 
 	return list, err
 }
 
-func (table table) Save(list Item) error {
+func (table dynamoListTable) Save(list List) error {
 	item, err := attributevalue.MarshalMap(list)
 	if err != nil {
 		panic(err)
@@ -80,7 +73,7 @@ func (table table) Save(list Item) error {
 	return err
 }
 
-func (table table) Delete(userId string, listId uuid.UUID) error {
+func (table dynamoListTable) Delete(userId string, listId uuid.UUID) error {
 	_, err := table.client.DeleteItem(context.TODO(), &dynamodb.DeleteItemInput{
 		TableName: aws.String(table.name),
 		Key:       createKey(userId, listId),

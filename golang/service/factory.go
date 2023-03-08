@@ -7,8 +7,8 @@ import (
 )
 
 type GetItService interface {
-	CreateList(userId string, data list.Data) (list.Item, error)
-	GetLists(userId string) ([]list.Item, error)
+	CreateList(userId string, data list.Data) (list.List, error)
+	GetLists(userId string) ([]list.List, error)
 	DeleteList(userId string, listId uuid.UUID) error
 }
 
