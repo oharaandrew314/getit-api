@@ -3,3 +3,5 @@ build/
 .gradle/
 .aws-sam/
 samconfig.toml
+.vscode/
+__debug_bin.exe
