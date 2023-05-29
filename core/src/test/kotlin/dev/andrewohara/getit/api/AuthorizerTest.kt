@@ -1,6 +1,7 @@
 package dev.andrewohara.getit.api
 
-import com.nimbusds.jose.crypto.MACVerifier
+import com.nimbusds.jose.JWSAlgorithm
+import com.nimbusds.jose.jwk.source.ImmutableSecret
 import dev.andrewohara.getit.UserId
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
@@ -11,10 +12,11 @@ import java.time.ZoneOffset
 class AuthorizerTest {
 
     private val authorizer = Authorizer.jwt(
-        audience = "getit-test",
-        issuer = listOf("jwtTest"),
+        audience = listOf("getit-test"),
+        issuer = "jwtTest",
         clock = Clock.fixed(Instant.parse("2022-11-05T12:00:00Z"), ZoneOffset.UTC),
-        getVerifier = { MACVerifier("qwertyuiopasdfghjklzxcvbnm123456") }
+        algorithm = JWSAlgorithm.HS256,
+        jwkSource = ImmutableSecret("qwertyuiopasdfghjklzxcvbnm123456".toByteArray())
     )
 
     @Test

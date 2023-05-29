@@ -1,15 +1,19 @@
 package dev.andrewohara.getit.api
 
-import com.nimbusds.jose.JWSVerifier
-import com.nimbusds.jose.crypto.RSASSAVerifier
-import com.nimbusds.jose.jwk.JWKSet
+import com.nimbusds.jose.JWSAlgorithm
+import com.nimbusds.jose.jwk.source.JWKSource
+import com.nimbusds.jose.jwk.source.RemoteJWKSet
+import com.nimbusds.jose.proc.JWSVerificationKeySelector
+import com.nimbusds.jose.proc.SecurityContext
+import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.SignedJWT
+import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier
+import com.nimbusds.jwt.proc.DefaultJWTProcessor
 import dev.andrewohara.getit.UserId
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.net.URL
-import java.text.ParseException
 import java.time.Clock
+import java.util.Date
 
 fun interface Authorizer {
     operator fun invoke(token: String): UserId?
@@ -17,67 +21,43 @@ fun interface Authorizer {
     companion object
 }
 
-fun interface GetVerifier {
-    operator fun invoke(keyId: String?): JWSVerifier?
-
-    companion object
+private class TestableClaimsVerifier(
+    exactMatchClaims: JWTClaimsSet,
+    requiredClaims: Set<String>,
+    private val clock: Clock
+): DefaultJWTClaimsVerifier<SecurityContext>(exactMatchClaims, requiredClaims) {
+    override fun currentTime(): Date = Date.from(clock.instant())
 }
 
-fun GetVerifier.Companion.rsaJwks(url: URL): GetVerifier {
-    val set by lazy {
-        JWKSet.load(url)
-    }
-    return GetVerifier { keyId ->
-        keyId
-            ?.let { set.getKeyByKeyId(keyId) }
-            ?.let { RSASSAVerifier(it.toRSAKey()) }
-    }
-}
-
-val googleJwkUri = URL("https://www.googleapis.com/oauth2/v3/certs")
-private val googleIss = listOf("https://accounts.google.com", "accounts.google.com")
+private val googleJwkUri = URL("https://www.googleapis.com/oauth2/v3/certs")
+private const val googleIss = "accounts.google.com"
 
 fun Authorizer.Companion.jwt(
-    audience: String,
-    getVerifier: GetVerifier,
+    audience: List<String>,
     clock: Clock,
-    issuer: List<String> = googleIss,
-    logger: Logger = LoggerFactory.getLogger(Authorizer::class.java)
+    issuer: String = googleIss,
+    algorithm: JWSAlgorithm = JWSAlgorithm.RS256,
+    jwkSource: JWKSource<SecurityContext> = RemoteJWKSet(googleJwkUri),
 ): Authorizer {
+    val logger = LoggerFactory.getLogger("authorizer")
+
+    val processor = DefaultJWTProcessor<SecurityContext>().apply {
+        jwtClaimsSetVerifier = TestableClaimsVerifier(
+            exactMatchClaims = JWTClaimsSet.Builder()
+                .issuer(issuer)
+                .audience(audience)
+                .build(),
+            emptySet(),
+            clock = clock
+        )
+        jwsKeySelector = JWSVerificationKeySelector(algorithm, jwkSource)
+    }
+
     return Authorizer { token ->
-        val jwt = try {
-            SignedJWT.parse(token)
-        } catch (e: ParseException) {
-            logger.debug("Error parsing JWT: ${e.message}")
-            return@Authorizer null
-        }
-
-        val claims = jwt.jwtClaimsSet
-
-        if (claims.issuer !in issuer) {
-            logger.info("JWT failed issuer verification: ${claims.issuer}")
-            return@Authorizer null
-        }
-        if (audience !in claims.audience) {
-            logger.info("JWT failed audience verification: ${claims.audience}")
-            return@Authorizer null
-        }
-
-        if (claims.expirationTime.toInstant() < clock.instant()) {
-            logger.info("JWT failed expiration check: ${claims.expirationTime}")
-            return@Authorizer null
-        }
-
-        val verifier = getVerifier(jwt.header.keyID)
-        if (verifier == null) {
-            logger.error("Could not find public key: ${jwt.header.keyID}")
-            return@Authorizer null
-        }
-
         kotlin
-            .runCatching { jwt.verify(verifier) }
-            .onFailure { logger.error("Error verifying JWT", it) }
-            .map { UserId.of(jwt.jwtClaimsSet.subject) }
+            .runCatching { SignedJWT.parse(token).let { processor.process(it, null) } }
+            .onFailure { logger.debug("Failed to process JWT: $it") }
+            .map { UserId.of(it.subject) }
             .getOrNull()
     }
 }

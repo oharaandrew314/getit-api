@@ -2,10 +2,7 @@ package dev.andrewohara.getit.http4k
 
 import dev.andrewohara.getit.GetItService
 import dev.andrewohara.getit.api.Authorizer
-import dev.andrewohara.getit.api.GetVerifier
-import dev.andrewohara.getit.api.googleJwkUri
 import dev.andrewohara.getit.api.jwt
-import dev.andrewohara.getit.api.rsaJwks
 import dev.andrewohara.getit.corsOrigins
 import dev.andrewohara.getit.dao.DynamoItemsDao.Companion.itemsDao
 import dev.andrewohara.getit.dao.DynamoListsDao.Companion.listsDao
@@ -33,8 +30,7 @@ fun main(args: Array<String>) {
     ).toHttp4k(
         corsOrigins = corsOrigins(env),
         authorizer = Authorizer.jwt(
-            audience = jwtAudience(env),
-            getVerifier = GetVerifier.rsaJwks(googleJwkUri),
+            audience = listOf(jwtAudience(env)),
             clock = Clock.systemUTC()
         )
     )

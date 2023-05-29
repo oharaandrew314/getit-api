@@ -1,10 +1,7 @@
 package dev.andrewohara.getit.spring
 
 import dev.andrewohara.getit.api.Authorizer
-import dev.andrewohara.getit.api.GetVerifier
-import dev.andrewohara.getit.api.googleJwkUri
 import dev.andrewohara.getit.api.jwt
-import dev.andrewohara.getit.api.rsaJwks
 import dev.andrewohara.getit.dao.DynamoItemsDao.Companion.itemsDao
 import dev.andrewohara.getit.dao.DynamoListsDao.Companion.listsDao
 import dev.andrewohara.getit.itemsTableName
@@ -31,8 +28,7 @@ class MainConfig {
 
     @Bean
     fun authorizer(): Authorizer = Authorizer.jwt(
-        audience = System.getenv("jwt_audience"),
-        getVerifier = GetVerifier.rsaJwks(googleJwkUri),
+        audience = listOf(System.getenv("jwt_audience")),
         clock = Clock.systemUTC()
     )
 }
