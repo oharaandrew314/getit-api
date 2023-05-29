@@ -26,7 +26,7 @@ allprojects {
         implementation(platform("io.ktor:ktor-bom:2.2.1"))
         implementation(platform("org.http4k:http4k-bom:4.40.0.0"))
         implementation(platform("org.http4k:http4k-connect-bom:3.33.2.0"))
-        implementation(platform("dev.forkhandles:forkhandles-bom:2.3.0.0"))
+        implementation(platform("dev.forkhandles:forkhandles-bom:2.5.0.0"))
 
         implementation(kotlin("stdlib-jdk8"))
         implementation("org.slf4j:slf4j-simple:2.0.6")

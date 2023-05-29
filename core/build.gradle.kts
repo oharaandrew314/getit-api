@@ -7,5 +7,5 @@ dependencies {
     implementation("dev.forkhandles:result4k")
     implementation("dev.forkhandles:values4k")
 
-    testImplementation("dev.mrbergin:result4k-kotest-matchers:2022.9.26")
+    testImplementation("dev.forkhandles:result4k-kotest")
 }

@@ -1,7 +1,7 @@
 package dev.andrewohara.getit
 
-import dev.mrbergin.kotest.result4k.shouldBeFailure
-import dev.mrbergin.kotest.result4k.shouldBeSuccess
+import dev.forkhandles.result4k.kotest.shouldBeFailure
+import dev.forkhandles.result4k.kotest.shouldBeSuccess
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe

@@ -25,7 +25,7 @@ private class TestableClaimsVerifier(
     exactMatchClaims: JWTClaimsSet,
     requiredClaims: Set<String>,
     private val clock: Clock
-): DefaultJWTClaimsVerifier<SecurityContext>(exactMatchClaims, requiredClaims) {
+) : DefaultJWTClaimsVerifier<SecurityContext>(exactMatchClaims, requiredClaims) {
     override fun currentTime(): Date = Date.from(clock.instant())
 }
 
