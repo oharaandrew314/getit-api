@@ -1,0 +1,8 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer /&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=a3e2956b_002D0e9c_002D47a9_002Db4b8_002Dbb0c74e8ec65/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="ShoppingListApiTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::C040FFB4-5659-4B74-A655-6BAA85076775::net7.0::getit_api.api.ShoppingListApiTest&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::C040FFB4-5659-4B74-A655-6BAA85076775::net7.0::getit_api.api.FooTest&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
